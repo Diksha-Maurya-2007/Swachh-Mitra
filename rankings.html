@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Rankings – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .score-detail-bar-wrap {
+      height: 6px; background: var(--color-bg); border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--color-border); flex: 1;
+    }
+    .score-detail-bar { height: 100%; border-radius: 6px; background: var(--color-primary-light); }
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .score-row-label { font-size: 0.78rem; color: var(--color-text-secondary); min-width: 160px; }
+    .score-row-val { font-size: 0.8rem; font-weight: 700; min-width: 40px; text-align: right; color: var(--color-primary-light); }
+
+    .leaderboard-row { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--color-border); transition: background var(--transition); }
+    .leaderboard-row:last-child { border-bottom: none; }
+    .leaderboard-row:hover { background: var(--color-bg); }
+
+    .lb-rank { font-size: 1.2rem; font-weight: 800; width: 32px; text-align: center; flex-shrink: 0; }
+    .lb-info { flex: 1; }
+    .lb-name { font-size: 0.9rem; font-weight: 700; color: var(--color-text); }
+    .lb-ward { font-size: 0.75rem; color: var(--color-text-muted); }
+    .lb-score { font-size: 1.4rem; font-weight: 800; color: var(--color-primary); letter-spacing: -0.03em; min-width: 44px; text-align: center; }
+    .lb-metrics { display: flex; gap: 10px; flex-wrap: wrap; min-width: 260px; }
+    .lb-metric { font-size: 0.72rem; color: var(--color-text-muted); text-align: center; }
+    .lb-metric-val { font-size: 0.82rem; font-weight: 700; color: var(--color-text); }
+
+    .scoring-card {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
+    }
+    .score-comp {
+      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      padding: 16px; text-align: center; box-shadow: var(--shadow-sm);
+    }
+    .score-comp-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .score-comp-name { font-size: 0.82rem; font-weight: 650; color: var(--color-text); margin-bottom: 4px; }
+    .score-comp-weight { font-size: 1.3rem; font-weight: 800; color: var(--color-primary); letter-spacing: -0.03em; }
+
+    @media (max-width: 900px) {
+      .lb-metrics { display: none; }
+      .scoring-card { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .lb-rank { font-size: 1rem; }
+      .lb-score { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell" id="app-shell"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+
+initPage({
+  activeNav: 'rankings',
+  title: 'Clean Neighbourhood Rankings',
+  subtitle: 'Encouraging communities to compete for cleaner neighbourhoods.',
+});
+
+renderRankingsPage();
+AppState.on('data-loaded', () => renderRankingsPage());
+AppState.init();
+
+function renderRankingsPage() {
+  const body  = document.getElementById('page-body');
+  const areas = [...AppState.areas].sort((a, b) => b.cleanlinessScore - a.cleanlinessScore);
+  const top3  = areas.slice(0, 3);
+
+  const medals = ['🥇', '🥈', '🥉'];
+  const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+  body.innerHTML = `
+    <!-- Competition Banner -->
+    <div class="competition-banner" style="margin-bottom:24px">
+      <div>
+        <h3>Monthly Clean Neighbourhood Challenge</h3>
+        <p>Neighbourhoods are ranked based on waste segregation, overflow management, collection efficiency, and open dumping behaviour. Top performers may receive recognition — subject to municipal policy.</p>
+        <div class="recognition-chips">
+          <span class="recog-chip">🏆 Trophy</span>
+          <span class="recog-chip">📜 Certificate</span>
+          <span class="recog-chip">📢 Public Recognition</span>
+          <span class="recog-chip">🎁 Sponsored Rewards</span>
+          <span class="recog-chip">🏛️ Govt. Incentives (Policy Dependent)</span>
+        </div>
+      </div>
+      <div class="banner-trophy">🏆</div>
+    </div>
+
+    <!-- Podium (Top 3) -->
+    <div class="section-title mb-16">Top 3 This Month</div>
+    <div class="rank-podium" style="margin-bottom:28px">
+      ${top3.map((area, i) => `
+        <div class="rank-podium-card ${rankClasses[i]}">
+          <div class="rank-medal">${medals[i]}</div>
+          <div class="rank-position">#${i + 1} Rank</div>
+          <div class="rank-area-name">${area.name}</div>
+          <div class="rank-ward">${area.ward}</div>
+          <div class="rank-score-large">${area.cleanlinessScore}</div>
+          <div class="rank-score-label">/ 100</div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px">
+            ${renderAreaMiniScores(area)}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- How the Score Works -->
+    <div class="card mb-24">
+      <div class="card-header">
+        <div>
+          <div class="card-title">How the Score Works</div>
+          <div class="section-subtitle">Prototype Scoring Model — not official government standards</div>
+        </div>
+      </div>
+      <div class="card-body-lg">
+        <div class="scoring-card">
+          <div class="score-comp">
+            <div class="score-comp-icon">♻️</div>
+            <div class="score-comp-name">Waste Segregation</div>
+            <div class="score-comp-weight">35%</div>
+          </div>
+          <div class="score-comp">
+            <div class="score-comp-icon">📊</div>
+            <div class="score-comp-name">Overflow Management</div>
+            <div class="score-comp-weight">25%</div>
+          </div>
+          <div class="score-comp">
+            <div class="score-comp-icon">🚛</div>
+            <div class="score-comp-name">Collection Efficiency</div>
+            <div class="score-comp-weight">20%</div>
+          </div>
+          <div class="score-comp">
+            <div class="score-comp-icon">🚫</div>
+            <div class="score-comp-name">Open Dumping Penalty</div>
+            <div class="score-comp-weight" style="color:var(--color-danger)">20%</div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--color-text-muted);line-height:1.6">
+          <strong>Note:</strong> This scoring model is a prototype assumption for MVP demonstration purposes only. It is not based on official government cleanliness indices such as Swachh Survekshan. Actual scoring would be defined in collaboration with municipal authorities.
+        </p>
+      </div>
+    </div>
+
+    <!-- Full Leaderboard -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Full Neighbourhood Leaderboard</div>
+        <span class="badge badge-info">September 2026</span>
+      </div>
+      <div>
+        ${areas.map((area, i) => {
+          const trendIcon = area.trend === 'up'
+            ? `<span class="trend-up" style="display:inline-flex;align-items:center;gap:3px;font-size:0.75rem;font-weight:600">${Icons.arrow_up} Up</span>`
+            : area.trend === 'down'
+            ? `<span class="trend-down" style="display:inline-flex;align-items:center;gap:3px;font-size:0.75rem;font-weight:600">${Icons.arrow_dn} Down</span>`
+            : `<span class="trend-same" style="font-size:0.75rem;font-weight:500">→ Same</span>`;
+          const dumpColor = area.openDumpingScore <= 5 ? 'var(--color-normal)' : area.openDumpingScore <= 15 ? 'var(--color-warning)' : 'var(--color-danger)';
+          const dumpLabel = area.openDumpingScore <= 5 ? 'Very Low' : area.openDumpingScore <= 15 ? 'Low' : area.openDumpingScore <= 25 ? 'Moderate' : 'High';
+
+          return `
+            <div class="leaderboard-row">
+              <div class="lb-rank" style="${i < 3 ? 'color:' + (['#f59e0b','#94a3b8','#d97706'][i]) : ''}">${i < 3 ? medals[i] : '#'+(i+1)}</div>
+              <div class="lb-info">
+                <div class="lb-name">${area.name}</div>
+                <div class="lb-ward">${area.ward}</div>
+              </div>
+              <div class="lb-metrics">
+                <div class="lb-metric">
+                  <div class="lb-metric-val">${area.segregationScore}%</div>
+                  <div>Segregation</div>
+                </div>
+                <div class="lb-metric">
+                  <div class="lb-metric-val">${area.collectionScore}%</div>
+                  <div>Collection</div>
+                </div>
+                <div class="lb-metric">
+                  <div class="lb-metric-val">${area.overflowScore}%</div>
+                  <div>Overflow Mgmt</div>
+                </div>
+                <div class="lb-metric">
+                  <div class="lb-metric-val" style="color:${dumpColor}">${dumpLabel}</div>
+                  <div>Open Dumping</div>
+                </div>
+              </div>
+              ${trendIcon}
+              <div class="lb-score">${area.cleanlinessScore}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderAreaMiniScores(area) {
+  const metrics = [
+    { label: 'Segregation',  val: area.segregationScore, max: 100 },
+    { label: 'Collection',   val: area.collectionScore,  max: 100 },
+    { label: 'Overflow Mgmt',val: area.overflowScore,    max: 100 },
+  ];
+
+  return metrics.map(m => `
+    <div class="score-row" style="gap:8px">
+      <span class="score-row-label" style="font-size:0.7rem;min-width:80px">${m.label}</span>
+      <div class="score-detail-bar-wrap">
+        <div class="score-detail-bar" style="width:${m.val}%"></div>
+      </div>
+      <span class="score-row-val" style="font-size:0.72rem;min-width:32px">${m.val}%</span>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Your Area – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Public Area Dashboard Styles ──────────────────────── */
+
+    /* Citizen nav (no sidebar — fully public) */
+    .citizen-nav {
+      background: #fff;
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 90;
+      box-shadow: var(--shadow-sm);
+    }
+    .citizen-nav-logo img { height: 36px; object-fit: contain; }
+    .citizen-nav-links { display: flex; align-items: center; gap: 20px; }
+    .citizen-nav-links a { font-size: 0.845rem; color: var(--color-text-secondary); font-weight: 500; transition: color var(--transition); }
+    .citizen-nav-links a:hover { color: var(--color-primary); }
+    .citizen-nav-links a.active { color: var(--color-primary); font-weight: 650; }
+
+    /* Location selector bar */
+    .location-bar {
+      background: var(--color-primary-dark);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .location-bar-label {
+      font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.7); white-space: nowrap;
+    }
+    .location-select-wrap {
+      display: flex; align-items: center; gap: 10px; flex: 1; max-width: 480px;
+    }
+    .location-search {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm); padding: 9px 14px;
+      flex: 1;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .location-search:focus-within { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+    .location-search svg { width: 15px; height: 15px; color: rgba(255,255,255,0.6); flex-shrink: 0; }
+    .location-search input {
+      flex: 1; background: none; border: none; outline: none;
+      color: white; font-size: 0.875rem;
+    }
+    .location-search input::placeholder { color: rgba(255,255,255,0.5); }
+    .location-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+      z-index: 50; overflow: hidden; max-height: 300px; overflow-y: auto;
+    }
+    .loc-search-wrap { position: relative; flex: 1; }
+    .loc-sugg-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; cursor: pointer; transition: background var(--transition);
+    }
+    .loc-sugg-item:hover { background: var(--color-bg); }
+    .loc-sugg-rank { font-size: 1rem; font-weight: 800; width: 24px; text-align: center; }
+    .loc-sugg-name { font-size: 0.875rem; font-weight: 600; color: var(--color-text); }
+    .loc-sugg-ward { font-size: 0.72rem; color: var(--color-text-muted); }
+    .loc-sugg-score-pill {
+      margin-left: auto; padding: 2px 10px;
+      border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+    }
+
+    /* Page layout */
+    .ad-page { background: var(--color-bg); min-height: 100vh; }
+    .ad-body  { max-width: 1100px; margin: 0 auto; padding: 28px 32px; }
+
+    /* Score hero card */
+    .score-hero {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+      padding: 28px 32px; margin-bottom: 20px;
+      display: grid; grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 24px;
+    }
+    .score-ring {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .score-ring-number { font-size: 2.2rem; font-weight: 900; line-height: 1; letter-spacing: -0.05em; }
+    .score-ring-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .score-hero-info h2 { font-size: 1.6rem; font-weight: 800; color: var(--color-text); letter-spacing: -0.03em; margin-bottom: 4px; }
+    .score-hero-info .area-ward { font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px; }
+    .score-rank-display {
+      display: inline-flex; align-items: baseline; gap: 6px;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); padding: 6px 14px; margin-bottom: 12px;
+    }
+    .score-rank-num { font-size: 1.5rem; font-weight: 900; color: var(--color-primary); letter-spacing: -0.04em; }
+    .score-rank-label { font-size: 0.78rem; color: var(--color-text-secondary); }
+    .score-trend { display: inline-flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 650; }
+    .score-hero-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+
+    /* Metric cards row */
+    .metric-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 8px; }
+    .metric-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 6px; }
+    .metric-bar-wrap { height: 5px; background: var(--color-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--color-border); }
+    .metric-bar { height: 100%; border-radius: 5px; }
+    .metric-sub { font-size: 0.72rem; color: var(--color-text-muted); margin-top: 5px; }
+
+    /* Weekly trend sparkline */
+    .trend-card {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: 20px;
+      box-shadow: var(--shadow-sm); margin-bottom: 20px;
+    }
+    .sparkline-wrap { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+    .spark-bar {
+      flex: 1; border-radius: 3px 3px 0 0;
+      transition: height 0.3s ease;
+      min-width: 20px;
+    }
+    .spark-labels { display: flex; gap: 4px; margin-top: 4px; }
+    .spark-label { flex: 1; text-align: center; font-size: 0.62rem; color: var(--color-text-muted); }
+
+    /* Nearby areas table */
+    .nearby-table { width: 100%; border-collapse: collapse; }
+    .nearby-table th {
+      background: var(--color-bg); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--color-text-muted); font-weight: 650;
+      padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--color-border);
+    }
+    .nearby-table td { padding: 12px 14px; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+    .nearby-table tr:last-child td { border-bottom: none; }
+    .nearby-table tbody tr { transition: background var(--transition); cursor: pointer; }
+    .nearby-table tbody tr:hover { background: var(--color-bg); }
+    .nearby-table tbody tr.highlight-row { background: #eff6ff; }
+    .nearby-table tbody tr.highlight-row td { font-weight: 600; }
+
+    /* Comparison bars */
+    .compare-section { margin-bottom: 20px; }
+    .compare-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--color-border);
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-metric-label { font-size: 0.82rem; color: var(--color-text); font-weight: 500; min-width: 160px; }
+    .compare-bar-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .compare-bar-row { display: flex; align-items: center; gap: 8px; }
+    .compare-area-tag { font-size: 0.68rem; font-weight: 600; min-width: 80px; color: var(--color-text-secondary); }
+    .compare-bar-wrap { flex: 1; height: 7px; background: var(--color-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--color-border); }
+    .compare-bar { height: 100%; border-radius: 5px; transition: width 0.4s; }
+    .compare-val { font-size: 0.75rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+    /* Highlights */
+    .highlights-list { display: flex; flex-direction: column; gap: 8px; }
+    .highlight-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; background: var(--color-bg);
+      border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+      font-size: 0.82rem; color: var(--color-text);
+    }
+    .highlight-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-normal); flex-shrink: 0; margin-top: 4px; }
+
+    /* Location selector initial state */
+    .location-selector-screen {
+      min-height: 60vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 48px 24px;
+    }
+    .lss-icon { width: 72px; height: 72px; background: #dbeafe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .lss-icon svg { width: 32px; height: 32px; color: var(--color-primary-light); }
+    .lss-title { font-size: 1.4rem; font-weight: 800; color: var(--color-text); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .lss-sub   { font-size: 0.9rem; color: var(--color-text-secondary); margin-bottom: 28px; max-width: 380px; line-height: 1.6; }
+    .lss-quick-areas { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .lss-area-btn {
+      padding: 8px 16px; border: 1px solid var(--color-border); border-radius: 20px;
+      font-size: 0.82rem; font-weight: 500; color: var(--color-text-secondary);
+      background: white; cursor: pointer; transition: all var(--transition);
+    }
+    .lss-area-btn:hover { border-color: var(--color-primary-light); color: var(--color-primary); background: #dbeafe; }
+
+    @media (max-width: 900px) {
+      .score-hero { grid-template-columns: auto 1fr; }
+      .score-hero-actions { flex-direction: row; grid-column: 1 / -1; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .ad-body { padding: 16px; }
+      .score-hero { grid-template-columns: 1fr; text-align: center; }
+      .score-ring { margin: 0 auto; }
+      .score-hero-actions { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .citizen-nav { padding: 0 16px; }
+      .location-bar { padding: 16px; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .compare-metric-label { min-width: 100px; }
+    }
+  </style>
+</head>
+<body class="ad-page">
+
+<!-- ── Citizen Nav ───────────────────────────────────────── -->
+<nav class="citizen-nav" role="navigation" aria-label="Site navigation">
+  <a href="index.html" class="citizen-nav-logo" aria-label="Swachh Mitra Home">
+    <img src="logo.jpg" alt="Swachh Mitra"
+         onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-size:1rem;font-weight:800;color:var(--color-primary)\'>Swachh Mitra</span>')">
+  </a>
+  <div class="citizen-nav-links">
+    <a href="index.html">Home</a>
+    <a href="area-dashboard.html" class="active">Check Your Area</a>
+    <a href="rankings.html">Rankings</a>
+    <a href="dashboard.html">Municipal Dashboard</a>
+  </div>
+</nav>
+
+<!-- ── Location Bar ──────────────────────────────────────── -->
+<div class="location-bar" role="search" aria-label="Location search">
+  <span class="location-bar-label">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14" style="display:inline;vertical-align:-2px;margin-right:4px"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+    Your Location:
+  </span>
+  <div class="location-select-wrap">
+    <div class="loc-search-wrap">
+      <div class="location-search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="locationInput" placeholder="Search area, ward, locality…" autocomplete="off" aria-label="Search for your area" aria-autocomplete="list">
+      </div>
+      <div class="location-dropdown" id="locationDropdown" style="display:none" role="listbox"></div>
+    </div>
+    <button class="btn btn-accent btn-sm" id="locationSearchBtn" aria-label="Search">Search</button>
+  </div>
+  <span id="currentLocationLabel" style="font-size:0.8rem;color:rgba(255,255,255,0.6)"></span>
+</div>
+
+<!-- ── Main Content ──────────────────────────────────────── -->
+<div class="ad-body" id="adBody">
+  <!-- Populated by JS -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script>
+let selectedArea = null;
+
+// Re-render when Supabase data arrives (keeps selected area)
+AppState.on('data-loaded', () => {
+  if (selectedArea) {
+    // Refresh selectedArea with updated data from Supabase
+    selectedArea = AppState.getAreaByName(selectedArea.name) || selectedArea;
+    renderAreaDashboard();
+  }
+});
+AppState.init();
+
+// ── Init: check sessionStorage for area from landing page search ──
+const stored = sessionStorage.getItem('sm_selected_area');
+if (stored) {
+  sessionStorage.removeItem('sm_selected_area');
+  const found = AppState.getAreaByName(stored);
+  if (found) { selectedArea = found; renderAreaDashboard(); }
+  else        { renderLocationSelector(); }
+} else {
+  renderLocationSelector();
+}
+
+// ── Location search wiring ─────────────────────────────────
+const locInput  = document.getElementById('locationInput');
+const locDrop   = document.getElementById('locationDropdown');
+const locBtn    = document.getElementById('locationSearchBtn');
+
+function renderDropdown(query) {
+  const results = AppState.searchAreas(query || '');
+  const sorted  = [...AppState.areas].sort((a,b) => b.cleanlinessScore - a.cleanlinessScore);
+  if (results.length === 0) {
+    locDrop.innerHTML = `<div style="padding:12px 16px;font-size:0.82rem;color:var(--color-text-muted)">No areas found. Try: Gomti Nagar, Aliganj…</div>`;
+  } else {
+    locDrop.innerHTML = results.map(area => {
+      const rank  = sorted.findIndex(a => a.id === area.id) + 1;
+      const s     = area.cleanlinessScore;
+      const sc    = s >= 85 ? '#16a34a' : s >= 70 ? '#d97706' : '#dc2626';
+      const bg    = s >= 85 ? '#dcfce7' : s >= 70 ? '#fef3c7' : '#fee2e2';
+      return `
+        <div class="loc-sugg-item" role="option" tabindex="0"
+          onclick="selectAreaFromSearch('${area.name}')"
+          onkeydown="if(event.key==='Enter') selectAreaFromSearch('${area.name}')">
+          <div class="loc-sugg-rank" style="color:${sc}">#${rank}</div>
+          <div>
+            <div class="loc-sugg-name">${area.name}</div>
+            <div class="loc-sugg-ward">${area.ward} · ${area.city || 'Lucknow'}</div>
+          </div>
+          <span class="loc-sugg-score-pill" style="background:${bg};color:${sc}">${s}/100</span>
+        </div>
+      `;
+    }).join('');
+  }
+  locDrop.style.display = 'block';
+}
+
+locInput.addEventListener('input', () => {
+  if (locInput.value.trim().length >= 1) renderDropdown(locInput.value.trim());
+  else renderDropdown('');
+});
+locInput.addEventListener('focus', () => renderDropdown(locInput.value.trim() || ''));
+locBtn.addEventListener('click', () => {
+  const q = locInput.value.trim();
+  if (q) selectAreaFromSearch(q);
+  else   renderDropdown('');
+});
+locInput.addEventListener('keydown', e => { if (e.key === 'Enter') locBtn.click(); });
+document.addEventListener('click', e => {
+  if (!e.target.closest('.loc-search-wrap') && !e.target.closest('#locationSearchBtn'))
+    locDrop.style.display = 'none';
+});
+
+function selectAreaFromSearch(name) {
+  const area = AppState.getAreaByName(name);
+  if (!area) return;
+  selectedArea = area;
+  locInput.value = area.name;
+  locDrop.style.display = 'none';
+  document.getElementById('currentLocationLabel').textContent = `Showing: ${area.name}`;
+  renderAreaDashboard();
+}
+
+// ── Location Selector Screen ───────────────────────────────
+function renderLocationSelector() {
+  document.getElementById('adBody').innerHTML = `
+    <div class="location-selector-screen">
+      <div class="lss-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="32" height="32"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="lss-title">Check Your Area's Cleanliness</div>
+      <p class="lss-sub">Enter your locality, area, or ward above to see your neighbourhood's cleanliness score, ranking, and how it compares to others.</p>
+      <div class="lss-quick-areas">
+        ${AppState.areas.map(a => `
+          <button class="lss-area-btn" onclick="selectAreaFromSearch('${a.name}')" aria-label="View ${a.name} dashboard">
+            ${a.name}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ── Area Dashboard Render ──────────────────────────────────
+function renderAreaDashboard() {
+  const area    = selectedArea;
+  if (!area) { renderLocationSelector(); return; }
+
+  const rank    = AppState.getAreaRank(area.id);
+  const total   = AppState.areas.length;
+  const nearby  = AppState.getNearbyAreas(area.id);
+  const score   = area.cleanlinessScore;
+  const sClass  = score >= 85 ? 'normal' : score >= 70 ? 'warning' : 'danger';
+  const sColor  = score >= 85 ? 'var(--color-normal)' : score >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+  const sBg     = score >= 85 ? '#dcfce7' : score >= 70 ? '#fef3c7' : '#fee2e2';
+  const trendIcon  = area.trend === 'up' ? '<span style="color:#16a34a">↑ Improving</span>' : area.trend === 'down' ? '<span style="color:#dc2626">↓ Declining</span>' : '<span style="color:#94a3b8">→ Stable</span>';
+  const dumpLabel  = area.openDumpingScore <= 5 ? 'Very Low' : area.openDumpingScore <= 15 ? 'Low' : area.openDumpingScore <= 25 ? 'Moderate' : 'High';
+  const dumpColor  = area.openDumpingScore <= 5 ? 'var(--color-normal)' : area.openDumpingScore <= 15 ? 'var(--color-normal)' : area.openDumpingScore <= 25 ? 'var(--color-warning)' : 'var(--color-danger)';
+  const days       = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const maxScore   = Math.max(...area.weeklyScores, 100);
+
+  document.getElementById('adBody').innerHTML = `
+
+    <!-- Score Hero Card -->
+    <div class="score-hero">
+      <div class="score-ring" style="background:${sBg};border:3px solid ${sColor}">
+        <div class="score-ring-number" style="color:${sColor}">${score}</div>
+        <div class="score-ring-label" style="color:${sColor}">/ 100</div>
+      </div>
+      <div class="score-hero-info">
+        <h2>${area.name}</h2>
+        <div class="area-ward">${area.ward} · ${area.city || 'Lucknow'} · <span>${area.description}</span></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px">
+          <div class="score-rank-display">
+            <span class="score-rank-num">#${rank}</span>
+            <span class="score-rank-label">of ${total} areas in Lucknow</span>
+          </div>
+          <div class="score-trend">${trendIcon}</div>
+          <span class="badge badge-${sClass}" style="font-size:0.78rem">
+            <span class="badge-dot"></span>
+            ${score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : 'Needs Attention'}
+          </span>
+        </div>
+        ${area.highlights && area.highlights.length ? `
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+            ${area.highlights.map(h => `<span style="font-size:0.72rem;background:#f0fdf4;color:#15803d;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;font-weight:500">✓ ${h}</span>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+      <div class="score-hero-actions">
+        <a href="rankings.html" class="btn btn-outline btn-sm">View All Rankings</a>
+        <a href="dashboard.html" class="btn btn-primary btn-sm">Municipal Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">♻️ Waste Segregation</div>
+        <div class="metric-value" style="color:${area.segregationScore >= 85 ? 'var(--color-normal)' : area.segregationScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.segregationScore}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.segregationScore}%;background:${area.segregationScore >= 85 ? 'var(--color-normal)' : area.segregationScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">Wet vs dry waste correctly separated</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">🚛 Collection Efficiency</div>
+        <div class="metric-value" style="color:${area.collectionScore >= 85 ? 'var(--color-normal)' : area.collectionScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.collectionScore}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.collectionScore}%;background:${area.collectionScore >= 85 ? 'var(--color-normal)' : area.collectionScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">Pickups completed on time</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">📊 Complaints Resolved</div>
+        <div class="metric-value" style="color:${area.complaintsRate >= 90 ? 'var(--color-normal)' : area.complaintsRate >= 75 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.complaintsRate}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.complaintsRate}%;background:${area.complaintsRate >= 90 ? 'var(--color-normal)' : area.complaintsRate >= 75 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">${area.complaintsResolved}/${area.complaintsTotal} complaints resolved</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">🚫 Open Dumping</div>
+        <div class="metric-value" style="color:${dumpColor}">${dumpLabel}</div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.openDumpingScore}%;background:${dumpColor}"></div></div>
+        <div class="metric-sub">Score: ${area.openDumpingScore}/100 (lower is better)</div>
+      </div>
+    </div>
+
+    <!-- Two-col: trend + bins -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px" class="ad-two-col">
+      <!-- Weekly Trend -->
+      <div class="trend-card">
+        <div class="section-header" style="margin-bottom:14px">
+          <div>
+            <div class="section-title">Weekly Cleanliness Trend</div>
+            <div class="section-subtitle">Past 7 days performance</div>
+          </div>
+          <span class="badge badge-${area.trend === 'up' ? 'normal' : area.trend === 'down' ? 'danger' : 'muted'}">${trendIcon}</span>
+        </div>
+        <div class="sparkline-wrap">
+          ${area.weeklyScores.map((s, i) => {
+            const pct = (s / maxScore) * 100;
+            const col = s >= 85 ? 'var(--color-normal)' : s >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+            const isToday = i === area.weeklyScores.length - 1;
+            return `<div class="spark-bar" title="${days[i]}: ${s}" style="height:${pct}%;background:${col};opacity:${isToday ? 1 : 0.55};${isToday ? 'outline:2px solid '+col+';outline-offset:2px' : ''}"></div>`;
+          }).join('')}
+        </div>
+        <div class="spark-labels">
+          ${days.map(d => `<div class="spark-label">${d}</div>`).join('')}
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:space-between">
+          <span style="font-size:0.75rem;color:var(--color-text-muted)">Lowest: <strong>${Math.min(...area.weeklyScores)}</strong></span>
+          <span style="font-size:0.75rem;color:var(--color-text-muted)">Highest: <strong>${Math.max(...area.weeklyScores)}</strong></span>
+          <span style="font-size:0.75rem;color:var(--color-text-muted)">Today: <strong style="color:${sColor}">${area.weeklyScores[area.weeklyScores.length-1]}</strong></span>
+        </div>
+      </div>
+
+      <!-- Bin Status for this area -->
+      <div class="card" style="box-shadow:var(--shadow-sm)">
+        <div class="card-header">
+          <div class="card-title">Bin Status in ${area.name}</div>
+          <a href="bins.html" class="btn btn-ghost btn-xs">View All →</a>
+        </div>
+        <div class="card-body-lg">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+            <div style="text-align:center;padding:12px;background:#dcfce7;border-radius:var(--radius-sm);border:1px solid #bbf7d0">
+              <div style="font-size:1.6rem;font-weight:800;color:var(--color-normal)">${area.binsNormal}</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-normal);font-weight:600;margin-top:3px">Normal</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:#fef3c7;border-radius:var(--radius-sm);border:1px solid #fde68a">
+              <div style="font-size:1.6rem;font-weight:800;color:var(--color-warning)">${area.nearlyFull}</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-warning);font-weight:600;margin-top:3px">Nearly Full</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:#fee2e2;border-radius:var(--radius-sm);border:1px solid #fca5a5">
+              <div style="font-size:1.6rem;font-weight:800;color:var(--color-danger)">${area.pickupRequired}</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-danger);font-weight:600;margin-top:3px">Pickup Needed</div>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--color-text-secondary);margin-bottom:12px">
+            <strong>${area.binsTotal}</strong> community bins monitored in this area.
+            ${area.pickupRequired > 0 ? `<span style="color:var(--color-danger);font-weight:600"> ${area.pickupRequired} require immediate pickup.</span>` : '<span style="color:var(--color-normal);font-weight:600"> All bins at acceptable levels.</span>'}
+          </div>
+          ${area.highlights ? `
+            <div class="highlights-list">
+              ${area.highlights.map(h => `<div class="highlight-item"><div class="highlight-dot"></div>${h}</div>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Nearby Area Rankings -->
+    <div class="card mb-20" style="box-shadow:var(--shadow-sm)">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Nearby Area Rankings</div>
+          <div class="section-subtitle">How ${area.name} compares to neighbouring areas</div>
+        </div>
+        <a href="rankings.html" class="btn btn-outline btn-sm">Full Leaderboard</a>
+      </div>
+      <div class="table-wrap">
+        <table class="nearby-table" aria-label="Nearby area rankings">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Area</th>
+              <th>Ward</th>
+              <th>Score</th>
+              <th>Trend</th>
+              <th>Segregation</th>
+              <th>Collection</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${nearby.map(a => {
+              const isSelected = a.id === area.id;
+              const sc = a.cleanlinessScore;
+              const col = sc >= 85 ? 'var(--color-normal)' : sc >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+              const tArrow = a.trend === 'up' ? '<span style="color:#16a34a;font-weight:700">↑</span>' : a.trend === 'down' ? '<span style="color:#dc2626;font-weight:700">↓</span>' : '<span style="color:#94a3b8">→</span>';
+              const medal = a.rank === 1 ? '🥇' : a.rank === 2 ? '🥈' : a.rank === 3 ? '🥉' : '';
+              return `
+                <tr class="${isSelected ? 'highlight-row' : ''}" onclick="selectAreaFromSearch('${a.name}')" role="button" tabindex="0"
+                  onkeydown="if(event.key==='Enter') selectAreaFromSearch('${a.name}')" aria-label="View ${a.name} dashboard${isSelected ? ' (your area)' : ''}">
+                  <td style="font-size:1.1rem;font-weight:800;color:var(--color-text-muted)">${medal || '#'+a.rank}</td>
+                  <td>
+                    <div style="font-weight:${isSelected ? '700' : '500'};color:var(--color-text)">${a.name}${isSelected ? ' <span style="font-size:0.7rem;background:#dbeafe;color:var(--color-primary-light);padding:2px 7px;border-radius:20px;font-weight:600">Your Area</span>' : ''}</div>
+                  </td>
+                  <td style="color:var(--color-text-muted);font-size:0.8rem">${a.ward}</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <span style="font-size:1.1rem;font-weight:800;color:${col}">${sc}</span>
+                      <div style="width:50px;height:5px;background:var(--color-bg);border-radius:5px;overflow:hidden;border:1px solid var(--color-border)"><div style="width:${sc}%;height:100%;background:${col};border-radius:5px"></div></div>
+                    </div>
+                  </td>
+                  <td>${tArrow}</td>
+                  <td style="color:var(--color-text-secondary);font-size:0.82rem">${a.segregationScore}%</td>
+                  <td style="color:var(--color-text-secondary);font-size:0.82rem">${a.collectionScore}%</td>
+                  <td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();selectAreaFromSearch('${a.name}')">View →</button></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Comparison Section -->
+    <div class="card mb-20" style="box-shadow:var(--shadow-sm)">
+      <div class="card-header">
+        <div>
+          <div class="card-title">How Does ${area.name} Compare?</div>
+          <div class="section-subtitle">Key metrics vs. city average and top performer</div>
+        </div>
+      </div>
+      <div class="card-body-lg compare-section">
+        ${renderComparisonRows(area, nearby)}
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div style="text-align:center;padding:20px;font-size:0.75rem;color:var(--color-text-muted)">
+      <span style="background:var(--color-bg);border:1px solid var(--color-border);padding:5px 14px;border-radius:20px">
+        📊 Prototype scoring model — not official government data · <a href="index.html" style="color:var(--color-primary-light)">Learn more</a>
+      </span>
+    </div>
+  `;
+}
+
+function renderComparisonRows(area, nearby) {
+  const allAreas  = AppState.areas;
+  const cityAvg   = (key) => Math.round(allAreas.reduce((s,a) => s + a[key], 0) / allAreas.length);
+  const topArea   = [...allAreas].sort((a,b) => b.cleanlinessScore - a.cleanlinessScore)[0];
+
+  const metrics = [
+    { label: '♻️ Waste Segregation',   key: 'segregationScore' },
+    { label: '🚛 Collection Efficiency',key: 'collectionScore'  },
+    { label: '📊 Overflow Management', key: 'overflowScore'    },
+    { label: '🏆 Overall Score',        key: 'cleanlinessScore' },
+  ];
+
+  return metrics.map(m => {
+    const myVal  = area[m.key];
+    const topVal = topArea[m.key];
+    const avgVal = cityAvg(m.key);
+    const myCol  = myVal >= 85 ? 'var(--color-normal)' : myVal >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+    const topCol = '#2563a8';
+    const avgCol = '#94a3b8';
+    return `
+      <div class="compare-row">
+        <div class="compare-metric-label">${m.label}</div>
+        <div class="compare-bar-group">
+          <div class="compare-bar-row">
+            <span class="compare-area-tag" style="color:${myCol};font-weight:700">${area.name}</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${myVal}%;background:${myCol}"></div></div>
+            <span class="compare-val" style="color:${myCol}">${myVal}%</span>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-area-tag">City Avg</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${avgVal}%;background:${avgCol}"></div></div>
+            <span class="compare-val" style="color:${avgCol}">${avgVal}%</span>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-area-tag" style="color:${topCol}">Top (${topArea.name})</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${topVal}%;background:${topCol}"></div></div>
+            <span class="compare-val" style="color:${topCol}">${topVal}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Populate location input if area already selected
+if (selectedArea) {
+  document.getElementById('locationInput').value = selectedArea.name;
+  document.getElementById('currentLocationLabel').textContent = `Showing: ${selectedArea.name}`;
+}
+
+// Style for two-col responsive
+const style = document.createElement('style');
+style.textContent = `@media (max-width: 768px) { .ad-two-col { grid-template-columns: 1fr !important; } }`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

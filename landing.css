@@ -1,0 +1,486 @@
+/* ============================================================
+   Swachh Mitra – Landing Page Styles
+   ============================================================ */
+
+/* ── Reset for landing (no sidebar) ────────────────────────── */
+.landing-page { font-family: var(--font-sans); background: var(--color-bg); }
+
+/* ── Landing Nav ────────────────────────────────────────────── */
+.landing-nav {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-logo .logo-icon-box {
+  width: 38px; height: 38px;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.landing-logo .logo-icon-box svg { width: 20px; height: 20px; color: white; }
+
+.landing-logo .brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.03em;
+}
+
+.landing-logo .brand-sub {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.landing-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.landing-nav-links a {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition: color var(--transition);
+}
+
+.landing-nav-links a:hover { color: var(--color-primary); }
+
+.landing-nav-cta {
+  display: flex; gap: 10px;
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.hero {
+  background: var(--color-surface);
+  padding: 72px 48px 64px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #dbeafe;
+  color: var(--color-primary-light);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.hero-badge svg { width: 13px; height: 13px; }
+
+.hero h1 {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  max-width: 720px;
+  margin: 0 auto 16px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  max-width: 580px;
+  margin: 0 auto 32px;
+  line-height: 1.65;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.hero-ctas .btn {
+  padding: 12px 24px;
+  font-size: 0.9rem;
+}
+
+/* ── Flow Diagram ───────────────────────────────────────────── */
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: nowrap;
+  max-width: 900px;
+  margin: 0 auto;
+  row-gap: 0;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  min-width: 100px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.flow-step-icon {
+  width: 40px; height: 40px;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.flow-step-icon svg { width: 20px; height: 20px; color: white; }
+.flow-step-name { font-size: 0.8rem; font-weight: 650; color: var(--color-text); }
+
+.flow-arrow {
+  color: var(--color-border-strong);
+  display: flex; align-items: center;
+  padding: 0 4px;
+}
+.flow-arrow svg { width: 18px; height: 18px; }
+
+/* ── Section Containers ─────────────────────────────────────── */
+.landing-section {
+  padding: 64px 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.landing-section.bg-surface {
+  background: var(--color-surface);
+  max-width: unset;
+  padding: 64px 0;
+}
+
+.landing-section.bg-surface .section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.landing-section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary-light);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.landing-section h2 {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+
+.landing-section .section-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  max-width: 540px;
+  line-height: 1.65;
+  margin-bottom: 36px;
+}
+
+/* ── Problem Cards ──────────────────────────────────────────── */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.problem-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  box-shadow: var(--shadow-sm);
+}
+
+.problem-card-icon {
+  width: 38px; height: 38px;
+  background: var(--color-danger-bg);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.problem-card-icon svg { width: 18px; height: 18px; color: var(--color-danger); }
+.problem-card-title { font-size: 0.875rem; font-weight: 650; color: var(--color-text); margin-bottom: 4px; }
+.problem-card-desc  { font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; }
+
+/* ── How it Works ───────────────────────────────────────────── */
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.how-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 22px 18px;
+  text-align: center;
+  position: relative;
+  transition: box-shadow var(--transition);
+}
+
+.how-card:hover { box-shadow: var(--shadow-md); }
+
+.how-step-num {
+  width: 28px; height: 28px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.how-card-icon {
+  width: 44px; height: 44px;
+  background: #dbeafe;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.how-card-icon svg { width: 22px; height: 22px; color: var(--color-primary-light); }
+.how-card-title { font-size: 0.9rem; font-weight: 700; color: var(--color-text); margin-bottom: 6px; }
+.how-card-desc  { font-size: 0.78rem; color: var(--color-text-secondary); line-height: 1.5; }
+
+/* ── Rankings preview ───────────────────────────────────────── */
+.ranking-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.ranking-prev-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.ranking-prev-card:hover { box-shadow: var(--shadow-md); }
+
+.rank-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.rank-num.gold   { color: #f59e0b; }
+.rank-num.silver { color: #94a3b8; }
+.rank-num.bronze { color: #d97706; }
+
+.rank-prev-info { flex: 1; }
+.rank-prev-name { font-size: 0.9rem; font-weight: 650; color: var(--color-text); }
+.rank-prev-ward { font-size: 0.75rem; color: var(--color-text-muted); }
+
+.rank-prev-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.03em;
+}
+
+/* ── Scoring weights ────────────────────────────────────────── */
+.score-weights {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 500px;
+}
+
+.score-weight-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-weight-label { font-size: 0.85rem; color: var(--color-text); font-weight: 500; min-width: 180px; }
+.score-weight-bar-wrap { flex: 1; height: 8px; background: var(--color-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
+.score-weight-bar { height: 100%; background: var(--color-primary-light); border-radius: 8px; }
+.score-weight-pct { font-size: 0.8rem; font-weight: 700; color: var(--color-primary-light); min-width: 36px; text-align: right; }
+
+/* ── Competition Banner ─────────────────────────────────────── */
+.competition-banner {
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.competition-banner h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.competition-banner p {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  max-width: 480px;
+  line-height: 1.55;
+}
+
+.competition-banner .recognition-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.recog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.12);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.recog-chip svg { width: 13px; height: 13px; }
+
+.banner-trophy { font-size: 4rem; flex-shrink: 0; }
+
+/* ── CTA Footer ─────────────────────────────────────────────── */
+.landing-cta-footer {
+  background: var(--color-primary-dark);
+  color: white;
+  padding: 72px 48px;
+  text-align: center;
+}
+
+.landing-cta-footer h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.03em;
+}
+
+.landing-cta-footer p {
+  font-size: 0.95rem;
+  opacity: 0.75;
+  max-width: 480px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+.landing-cta-footer .cta-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-white {
+  background: white;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  border: none;
+}
+.btn-white:hover { background: #f1f5f9; }
+
+.btn-outline-white {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  font-weight: 600;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.08); }
+
+/* ── Landing Footer ─────────────────────────────────────────── */
+.landing-footer {
+  background: var(--color-primary-dark);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.landing-footer p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.mvp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14,165,233,0.15);
+  color: var(--color-accent);
+  border: 1px solid rgba(14,165,233,0.25);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ── Responsive Landing ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .landing-nav { padding: 0 20px; }
+  .landing-nav-links { display: none; }
+  .hero { padding: 48px 20px 40px; }
+  .landing-section { padding: 48px 20px; }
+  .landing-section.bg-surface .section-inner { padding: 0 20px; }
+  .flow-diagram { gap: 6px; }
+  .flow-step { min-width: 90px; padding: 12px; }
+  .competition-banner { padding: 24px; }
+  .landing-cta-footer { padding: 48px 20px; }
+  .landing-footer { padding: 16px 20px; }
+}

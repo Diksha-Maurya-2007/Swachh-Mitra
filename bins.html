@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Bin Monitoring – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell" id="app-shell"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+
+initPage({
+  activeNav: 'bins',
+  title: 'Smart Bin Monitoring',
+  subtitle: 'Monitor individual community bins and their fill levels.',
+  showSearch: true,
+  searchPlaceholder: 'Search bin ID or area...',
+});
+
+let currentFilter = 'all';
+
+renderBinsPage();
+AppState.on('data-loaded', () => renderBinsPage());
+AppState.init();
+
+
+function renderBinsPage() {
+  const body = document.getElementById('page-body');
+  const stats = AppState.getDashboardStats();
+  body.innerHTML = `
+    <!-- Mini KPI row -->
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kpi-card" style="padding:14px 16px">
+        <div class="kpi-label">Total Bins</div>
+        <div class="kpi-value" style="font-size:1.8rem">${stats.total}</div>
+      </div>
+      <div class="kpi-card kpi-normal" style="padding:14px 16px">
+        <div class="kpi-label">Normal</div>
+        <div class="kpi-value" style="font-size:1.8rem">${stats.normal}</div>
+      </div>
+      <div class="kpi-card kpi-warning" style="padding:14px 16px">
+        <div class="kpi-label">Nearly Full</div>
+        <div class="kpi-value" style="font-size:1.8rem">${stats.nearFull}</div>
+      </div>
+      <div class="kpi-card kpi-danger" style="padding:14px 16px">
+        <div class="kpi-label">Pickup Required</div>
+        <div class="kpi-value" style="font-size:1.8rem">${stats.pickup}</div>
+      </div>
+    </div>
+
+    <!-- Filter & sort bar -->
+    <div class="card mb-20" style="padding:14px 20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div class="filter-bar" id="binFilterBar">
+          <button class="filter-btn active" onclick="applyFilter(this,'all')">All</button>
+          <button class="filter-btn" onclick="applyFilter(this,'Normal')">
+            <span class="badge-dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-normal);margin-right:4px"></span>Normal
+          </button>
+          <button class="filter-btn" onclick="applyFilter(this,'Nearly Full')">
+            <span class="badge-dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-warning);margin-right:4px"></span>Nearly Full
+          </button>
+          <button class="filter-btn" onclick="applyFilter(this,'Pickup Required')">
+            <span class="badge-dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--color-danger);margin-right:4px"></span>Pickup Required
+          </button>
+          <button class="filter-btn" onclick="applyFilter(this,'Wet')">Wet Waste</button>
+          <button class="filter-btn" onclick="applyFilter(this,'Dry')">Dry Waste</button>
+        </div>
+        <div style="font-size:0.78rem;color:var(--color-text-muted)" id="binCount">${AppState.bins.length} bins shown</div>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="bin-grid" id="binGrid">
+      ${renderBinCards(AppState.bins)}
+    </div>
+  `;
+
+  // Search
+  const searchInput = document.getElementById('globalSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = getFilteredBins().filter(b =>
+        b.binNumber.toLowerCase().includes(q) ||
+        b.area.toLowerCase().includes(q) ||
+        b.location.toLowerCase().includes(q)
+      );
+      document.getElementById('binGrid').innerHTML = renderBinCards(filtered);
+      document.getElementById('binCount').textContent = `${filtered.length} bins shown`;
+    });
+  }
+}
+
+function getFilteredBins() {
+  if (currentFilter === 'all') return AppState.bins;
+  if (currentFilter === 'Wet' || currentFilter === 'Dry')
+    return AppState.bins.filter(b => b.wasteType === currentFilter);
+  return AppState.bins.filter(b => AppState.getStatus(b.fillLevel) === currentFilter);
+}
+
+function applyFilter(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('#binFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = getFilteredBins();
+  document.getElementById('binGrid').innerHTML = renderBinCards(filtered);
+  document.getElementById('binCount').textContent = `${filtered.length} bins shown`;
+}
+
+function renderBinCards(bins) {
+  if (bins.length === 0) return `
+    <div class="empty-state" style="grid-column:1/-1">
+      ${Icons.bins}
+      <div class="empty-state-title">No bins match this filter</div>
+      <div class="empty-state-desc">Try adjusting your filter or search term.</div>
+    </div>
+  `;
+
+  return bins.map(bin => {
+    const statusCls  = getStatusClass(bin.fillLevel);
+    const status     = AppState.getStatus(bin.fillLevel);
+    const cardStatus = status === 'Pickup Required' ? 'status-danger' : status === 'Nearly Full' ? 'status-warning' : 'status-normal';
+
+    return `
+      <article class="bin-card ${cardStatus}" onclick="openBinModal(${bin.id})" role="button" tabindex="0" aria-label="Bin ${bin.binNumber}, ${bin.area}, ${bin.fillLevel}% full"
+        onkeydown="if(event.key==='Enter'||event.key===' ') openBinModal(${bin.id})">
+        <div class="bin-card-header">
+          <div>
+            <div class="bin-id">Bin #${bin.binNumber}</div>
+            <div class="bin-area">${bin.area}</div>
+            <div class="bin-location">${bin.location}</div>
+          </div>
+          ${getStatusBadge(bin.fillLevel)}
+        </div>
+
+        <div class="fill-label-row">
+          <span class="fill-label">Fill Level</span>
+          <span class="fill-pct ${statusCls}">${bin.fillLevel}%</span>
+        </div>
+        ${buildProgressBar(bin.fillLevel)}
+
+        <div class="bin-meta">
+          <div class="bin-meta-item">
+            <span class="bin-meta-label">Waste Type</span>
+            <span class="bin-meta-value">
+              <span class="waste-type-badge ${bin.wasteType === 'Wet' ? 'waste-wet' : 'waste-dry'}">${bin.wasteType} Waste</span>
+            </span>
+          </div>
+          <div class="bin-meta-item">
+            <span class="bin-meta-label">Predicted Full</span>
+            <span class="bin-meta-value" style="${bin.predictedFullTime ? (bin.fillLevel >= 85 ? 'color:var(--color-danger)' : 'color:var(--color-warning)') : ''}">
+              ${bin.predictedFullTime || '—'}
+            </span>
+          </div>
+          <div class="bin-meta-item">
+            <span class="bin-meta-label">Last Pickup</span>
+            <span class="bin-meta-value">${bin.lastPickup}</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// Re-render on state changes
+AppState.on('bin-update', () => {
+  const filtered = getFilteredBins();
+  const grid = document.getElementById('binGrid');
+  if (grid) grid.innerHTML = renderBinCards(filtered);
+});
+</script>
+</body>
+</html>

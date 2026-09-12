@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .settings-grid { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
+    .settings-menu { position: sticky; top: calc(var(--header-height) + 20px); }
+    .settings-menu-link {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 14px; border-radius: var(--radius-sm);
+      font-size: 0.845rem; font-weight: 500; color: var(--color-text-secondary);
+      cursor: pointer; transition: background var(--transition), color var(--transition);
+    }
+    .settings-menu-link:hover { background: var(--color-bg); color: var(--color-text); }
+    .settings-menu-link.active { background: #dbeafe; color: var(--color-primary); font-weight: 650; }
+    .settings-menu-link svg { width: 16px; height: 16px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; }
+    .form-input {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+      font-size: 0.875rem; color: var(--color-text); background: var(--color-surface);
+      outline: none; transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(37,99,168,0.1); }
+    .form-hint { font-size: 0.73rem; color: var(--color-text-muted); margin-top: 4px; }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--color-border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 0.875rem; font-weight: 600; color: var(--color-text); }
+    .toggle-desc  { font-size: 0.775rem; color: var(--color-text-muted); margin-top: 2px; }
+
+    .toggle {
+      position: relative; display: inline-flex; align-items: center;
+      width: 40px; height: 22px; cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      width: 40px; height: 22px; background: var(--color-border-strong);
+      border-radius: 11px; transition: background 0.2s ease;
+    }
+    .toggle input:checked + .toggle-track { background: var(--color-primary-light); }
+    .toggle-thumb {
+      position: absolute; left: 3px; top: 3px;
+      width: 16px; height: 16px; background: white;
+      border-radius: 50%; transition: transform 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+    @media (max-width: 768px) {
+      .settings-grid { grid-template-columns: 1fr; }
+      .settings-menu { position: static; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell" id="app-shell"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+
+initPage({
+  activeNav: 'settings',
+  title: 'Settings',
+  subtitle: 'Configure dashboard preferences and notification settings.',
+});
+
+AppState.init(); // Initialize Supabase for this page
+
+document.getElementById('page-body').innerHTML = `
+  <div class="settings-grid">
+    <!-- Settings nav -->
+    <div class="card settings-menu">
+      <div style="padding:12px 10px">
+        <div class="settings-menu-link active" onclick="showSection('general')">
+          ${Icons.settings} General
+        </div>
+        <div class="settings-menu-link" onclick="showSection('notifications')">
+          ${Icons.bell} Notifications
+        </div>
+        <div class="settings-menu-link" onclick="showSection('thresholds')">
+          ${Icons.alert} Alert Thresholds
+        </div>
+        <div class="settings-menu-link" onclick="showSection('about')">
+          ${Icons.star} About
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings panels -->
+    <div>
+      <!-- General -->
+      <div class="card" id="section-general">
+        <div class="card-header">
+          <div class="card-title">General Settings</div>
+        </div>
+        <div class="card-body-lg">
+          <div class="form-group">
+            <label class="form-label" for="cityName">Municipality / City</label>
+            <input class="form-input" id="cityName" type="text" value="Lucknow Municipal Corporation" aria-describedby="cityNameHint">
+            <div class="form-hint" id="cityNameHint">Displayed on dashboard header and reports.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="timezone">Timezone</label>
+            <select class="form-input" id="timezone" aria-label="Select timezone">
+              <option selected>Asia/Kolkata (IST, UTC+5:30)</option>
+              <option>UTC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="language">Language</label>
+            <select class="form-input" id="language" aria-label="Select language">
+              <option selected>English</option>
+              <option>हिंदी (Hindi)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveSetting()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Notifications (hidden by default) -->
+      <div class="card hidden" id="section-notifications">
+        <div class="card-header">
+          <div class="card-title">Notification Preferences</div>
+        </div>
+        <div class="card-body-lg">
+          ${[
+            { label: 'Pickup Required Alerts',    desc: 'Notify when a bin reaches 85%+ fill level.',    checked: true  },
+            { label: 'Nearly Full Warnings',      desc: 'Notify when a bin reaches 70–84% fill level.',  checked: true  },
+            { label: 'Predicted Overflow Alerts', desc: 'Notify when overflow is predicted within 1 hr.',checked: true  },
+            { label: 'Collection Completed',      desc: 'Notify when a pickup task is marked complete.',  checked: false },
+            { label: 'Daily Summary Report',      desc: 'Send a daily overview email to the dashboard.',  checked: false },
+            { label: 'Team Assignment Updates',   desc: 'Notify when collection teams are assigned.',     checked: true  },
+          ].map((n, i) => `
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-label">${n.label}</div>
+                <div class="toggle-desc">${n.desc}</div>
+              </div>
+              <label class="toggle" aria-label="${n.label}">
+                <input type="checkbox" ${n.checked ? 'checked' : ''} onchange="showToast('Preference updated','success')">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Thresholds (hidden by default) -->
+      <div class="card hidden" id="section-thresholds">
+        <div class="card-header">
+          <div class="card-title">Alert Thresholds</div>
+          <span class="badge badge-muted">Prototype Defaults</span>
+        </div>
+        <div class="card-body-lg">
+          <p style="font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:20px;line-height:1.6">
+            Configure the fill-level thresholds that determine bin status and alert generation. These values are used across the entire dashboard.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="threshNormal">Normal → Nearly Full threshold (%)</label>
+            <input class="form-input" id="threshNormal" type="number" min="50" max="90" value="70" style="max-width:120px" aria-describedby="threshNormalHint">
+            <div class="form-hint" id="threshNormalHint">Bins at or above this level are flagged as Nearly Full.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="threshPickup">Nearly Full → Pickup Required threshold (%)</label>
+            <input class="form-input" id="threshPickup" type="number" min="70" max="99" value="85" style="max-width:120px" aria-describedby="threshPickupHint">
+            <div class="form-hint" id="threshPickupHint">Bins at or above this level require immediate pickup.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="predWindow">Prediction Alert Window (hours)</label>
+            <input class="form-input" id="predWindow" type="number" min="1" max="12" value="2" style="max-width:120px" aria-describedby="predWindowHint">
+            <div class="form-hint" id="predWindowHint">Show alerts for bins predicted to overflow within this timeframe.</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveSetting()">Apply Thresholds</button>
+        </div>
+      </div>
+
+      <!-- About (hidden by default) -->
+      <div class="card hidden" id="section-about">
+        <div class="card-header">
+          <div class="card-title">About Swachh Mitra</div>
+        </div>
+        <div class="card-body-lg">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+            <div style="width:52px;height:52px;background:var(--color-primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:white">
+              ${Icons.leaf}
+            </div>
+            <div>
+              <div style="font-size:1.1rem;font-weight:800;color:var(--color-primary)">Swachh Mitra</div>
+              <div style="font-size:0.8rem;color:var(--color-text-muted)">Smarter Waste Management. Cleaner Communities.</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+            ${[
+              ['Version', 'v1.0.0-MVP'],
+              ['Build', 'September 2026'],
+              ['Stage', 'Frontend Prototype'],
+              ['Backend', 'Not Connected Yet'],
+              ['IoT Integration', 'Simulated Only'],
+              ['ML/Prediction', 'Rule-based (Demo)'],
+            ].map(([k,v]) => `
+              <div class="detail-item">
+                <span class="detail-label">${k}</span>
+                <span class="detail-value">${v}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div style="background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px;font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7">
+            <strong>MVP Disclaimer:</strong> Swachh Mitra is an early-stage prototype built for demonstration and competition purposes. It is not yet connected to live sensors, a production database, or real municipal systems. All data shown is simulated dummy data. Features such as IoT integration, ML-based prediction, and citizen-facing apps are planned for future development phases.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+function showSection(id) {
+  ['general','notifications','thresholds','about'].forEach(s => {
+    const el = document.getElementById('section-' + s);
+    if (el) el.classList.toggle('hidden', s !== id);
+  });
+  document.querySelectorAll('.settings-menu-link').forEach((link, i) => {
+    link.classList.toggle('active', link.textContent.trim().toLowerCase().includes(id.slice(0,4)));
+  });
+}
+
+function saveSetting() {
+  showToast('Settings saved successfully', 'success');
+}
+</script>
+</body>
+</html>

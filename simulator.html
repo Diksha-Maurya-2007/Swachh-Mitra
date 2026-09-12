@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Simulator – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .sim-panel { position: sticky; top: calc(var(--header-height) + 20px); }
+
+    .bin-selector-list {
+      display: flex; flex-direction: column; gap: 2px;
+      max-height: 440px; overflow-y: auto;
+    }
+
+    .bin-selector-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background var(--transition);
+      border: 1px solid transparent;
+    }
+    .bin-selector-item:hover { background: var(--color-bg); }
+    .bin-selector-item.selected { background: #dbeafe; border-color: var(--color-primary-light); }
+
+    .bin-sel-num { font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); min-width: 32px; }
+    .bin-sel-info { flex: 1; }
+    .bin-sel-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
+    .bin-sel-area { font-size: 0.73rem; color: var(--color-text-muted); }
+    .bin-sel-pct  { font-size: 0.88rem; font-weight: 800; }
+
+    .sim-history-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+    .sim-history-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 12px; border-radius: var(--radius-sm);
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 900px) {
+      .sim-layout { grid-template-columns: 1fr; }
+      .sim-panel { position: static; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell" id="app-shell"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+
+initPage({
+  activeNav: 'simulator',
+  title: 'Smart Bin Sensor Simulator',
+  subtitle: 'Simulate IoT fill-level readings for prototype demonstration.',
+});
+
+let selectedBinId  = 4; // default: Bin #104
+let simHistory     = [];
+
+renderSimulatorPage();
+AppState.on('data-loaded', () => renderSimulatorPage());
+AppState.init();
+
+function renderSimulatorPage() {
+  const body = document.getElementById('page-body');
+
+  body.innerHTML = `
+    <!-- Prototype Notice -->
+    <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:var(--radius-md);padding:12px 18px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px" role="note">
+      <div style="flex-shrink:0;color:var(--color-primary-light);margin-top:1px">${Icons.wifi}</div>
+      <div>
+        <div style="font-size:0.845rem;font-weight:650;color:var(--color-primary)">Prototype IoT Simulation</div>
+        <div style="font-size:0.78rem;color:var(--color-primary-light);margin-top:2px">
+          In the production system, fill-level readings come from ultrasonic/IR sensors installed in community bins and transmitted via IoT gateways. This simulator demonstrates how sensor data would flow into the dashboard.
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-layout">
+      <!-- Left: bin selector -->
+      <div>
+        <div class="card sim-panel">
+          <div class="card-header">
+            <div class="card-title">Select Bin to Simulate</div>
+            <span class="badge badge-info">${AppState.bins.length} bins</span>
+          </div>
+          <div class="card-body" style="padding:10px">
+            <div class="bin-selector-list" id="binSelectorList">
+              ${renderBinSelectorList()}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: simulator controls -->
+      <div id="simRightPanel">
+        ${renderSimPanel()}
+      </div>
+    </div>
+  `;
+}
+
+function renderBinSelectorList() {
+  return AppState.bins.map(bin => {
+    const cls     = getStatusClass(bin.fillLevel);
+    const isSelected = bin.id === selectedBinId;
+    return `
+      <div class="bin-selector-item ${isSelected ? 'selected' : ''}" onclick="selectBin(${bin.id})" role="button" tabindex="0"
+        onkeydown="if(event.key==='Enter') selectBin(${bin.id})" aria-selected="${isSelected}" aria-label="Select Bin ${bin.binNumber}">
+        <div class="bin-sel-num">#${bin.binNumber}</div>
+        <div class="bin-sel-info">
+          <div class="bin-sel-name">${bin.area}</div>
+          <div class="bin-sel-area">${bin.wasteType} Waste</div>
+        </div>
+        <div class="bin-sel-pct ${cls}">${bin.fillLevel}%</div>
+        ${getStatusBadge(bin.fillLevel)}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSimPanel() {
+  const bin    = AppState.getBinById(selectedBinId);
+  if (!bin) return '';
+  const status = AppState.getStatus(bin.fillLevel);
+  const cls    = getStatusClass(bin.fillLevel);
+
+  const controls = [
+    { label: '+10%',   fn: `adjustFill(${bin.id}, ${bin.fillLevel}, +10)`, cls: 'btn-primary'  },
+    { label: '+5%',    fn: `adjustFill(${bin.id}, ${bin.fillLevel}, +5)`,  cls: 'btn-primary'  },
+    { label: '−5%',    fn: `adjustFill(${bin.id}, ${bin.fillLevel}, -5)`,  cls: 'btn-outline'  },
+    { label: '−10%',   fn: `adjustFill(${bin.id}, ${bin.fillLevel}, -10)`, cls: 'btn-outline'  },
+    { label: 'Set 25%',fn: `setFill(${bin.id}, 25)`,  cls: 'btn-ghost'    },
+    { label: 'Set 50%',fn: `setFill(${bin.id}, 50)`,  cls: 'btn-ghost'    },
+    { label: 'Set 75%',fn: `setFill(${bin.id}, 75)`,  cls: 'btn-ghost'    },
+    { label: 'Set 90%',fn: `setFill(${bin.id}, 90)`,  cls: 'btn-ghost'    },
+    { label: 'Set 100%',fn:`setFill(${bin.id}, 100)`, cls: 'btn-danger'   },
+    { label: 'Reset',  fn: `setFill(${bin.id}, 0)`,   cls: 'btn-success'  },
+  ];
+
+  return `
+    <!-- Bin Info -->
+    <div class="card mb-20">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Bin #${bin.binNumber} — ${bin.area}</div>
+          <div class="section-subtitle">${bin.location}</div>
+        </div>
+        <span class="waste-type-badge ${bin.wasteType === 'Wet' ? 'waste-wet' : 'waste-dry'} " style="font-size:0.8rem;padding:4px 10px">${bin.wasteType} Waste</span>
+      </div>
+      <div class="card-body-lg">
+
+        <!-- Big fill display -->
+        <div class="sim-fill-display ${cls}">${bin.fillLevel}<span style="font-size:2rem;font-weight:600">%</span></div>
+        <div class="sim-status-display">${getStatusBadge(bin.fillLevel)}</div>
+
+        <!-- Progress bar -->
+        <div class="sim-progress-wrap" role="progressbar" aria-valuenow="${bin.fillLevel}" aria-valuemin="0" aria-valuemax="100" aria-label="${bin.fillLevel}% full">
+          <div class="sim-progress-fill ${cls}" id="simProgressFill" style="width:${bin.fillLevel}%"></div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="detail-grid" style="margin-bottom:20px">
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">${status}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Predicted Full</span>
+            <span class="detail-value">${bin.predictedFullTime || '—'}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Pickup</span>
+            <span class="detail-value">${bin.lastPickup}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Waste Type</span>
+            <span class="detail-value">${bin.wasteType} Waste</span>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="section-title" style="margin-bottom:10px;font-size:0.82rem">Simulator Controls</div>
+        <div class="sim-control-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:6px">
+          ${controls.map(c => `
+            <button class="btn ${c.cls} btn-sm" onclick="${c.fn}" style="justify-content:center;font-size:0.78rem">
+              ${c.label}
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Custom value -->
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px;background:var(--color-bg);border-radius:var(--radius-sm);border:1px solid var(--color-border)">
+          <label for="customFill" style="font-size:0.82rem;font-weight:600;color:var(--color-text-secondary);white-space:nowrap">Custom Value:</label>
+          <input type="range" id="customFill" min="0" max="100" value="${bin.fillLevel}"
+            style="flex:1;accent-color:var(--color-primary-light)"
+            oninput="document.getElementById('customFillVal').textContent=this.value+'%'"
+            onchange="setFill(${bin.id}, parseInt(this.value))"
+            aria-label="Set custom fill level">
+          <span id="customFillVal" style="font-size:0.9rem;font-weight:700;color:var(--color-primary);min-width:40px">${bin.fillLevel}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulation Log -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Simulation Log</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearHistory()" aria-label="Clear log">Clear</button>
+      </div>
+      <div class="card-body">
+        ${simHistory.length === 0 ? `
+          <div class="empty-state" style="padding:24px">
+            ${Icons.chart}
+            <div class="empty-state-title">No changes yet</div>
+            <div class="empty-state-desc">Use the controls above to simulate sensor readings.</div>
+          </div>
+        ` : `
+          <div class="sim-history-list">
+            ${simHistory.slice().reverse().map(h => `
+              <div class="sim-history-item">
+                <span style="color:var(--color-text-secondary)">${h.time}</span>
+                <span>Bin #${h.binNumber}</span>
+                <span>${h.from}% → <strong class="${getStatusClass(h.to)}">${h.to}%</strong></span>
+                ${getStatusBadge(h.to)}
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function selectBin(binId) {
+  selectedBinId = binId;
+  document.getElementById('binSelectorList').innerHTML = renderBinSelectorList();
+  document.getElementById('simRightPanel').innerHTML   = renderSimPanel();
+}
+
+function adjustFill(binId, current, delta) {
+  const newLevel = Math.max(0, Math.min(100, current + delta));
+  doSetFill(binId, current, newLevel);
+}
+
+function setFill(binId, newLevel) {
+  const bin = AppState.getBinById(binId);
+  if (!bin) return;
+  doSetFill(binId, bin.fillLevel, newLevel);
+}
+
+function doSetFill(binId, oldLevel, newLevel) {
+  const bin = AppState.getBinById(binId);
+  if (!bin) return;
+  if (newLevel === oldLevel) return;
+
+  simHistory.push({
+    time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    binNumber: bin.binNumber,
+    from: oldLevel,
+    to: newLevel,
+  });
+
+  AppState.updateBinFillLevel(binId, newLevel);
+
+  // Refresh UI
+  document.getElementById('binSelectorList').innerHTML = renderBinSelectorList();
+  document.getElementById('simRightPanel').innerHTML   = renderSimPanel();
+
+  showToast(`Bin #${bin.binNumber}: ${oldLevel}% → ${newLevel}% (${AppState.getStatus(newLevel)})`, newLevel >= 85 ? 'danger' : newLevel >= 70 ? 'warning' : 'success');
+}
+
+function clearHistory() {
+  simHistory = [];
+  document.getElementById('simRightPanel').innerHTML = renderSimPanel();
+}
+
+// Sync selector when bin updated externally
+AppState.on('bin-update', () => {
+  const list = document.getElementById('binSelectorList');
+  if (list) list.innerHTML = renderBinSelectorList();
+});
+</script>
+</body>
+</html>
