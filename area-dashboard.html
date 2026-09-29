@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Your Area – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Public Area Dashboard Styles ──────────────────────── */
+
+    /* Citizen nav */
+    .citizen-nav {
+      background: #fff;
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 90;
+      box-shadow: var(--shadow-sm);
+    }
+    .citizen-nav-logo img { height: 36px; object-fit: contain; }
+    .citizen-nav-links { display: flex; align-items: center; gap: 20px; }
+    .citizen-nav-links a { font-size: 0.845rem; color: var(--color-text-secondary); font-weight: 500; transition: color var(--transition); text-decoration: none; }
+    .citizen-nav-links a:hover { color: var(--color-primary); }
+    .citizen-nav-links a.active { color: var(--color-primary); font-weight: 650; }
+
+    /* Location selector bar */
+    .location-bar {
+      background: var(--color-primary-dark);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .location-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      max-width: 600px;
+    }
+    .location-bar-label {
+      font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.8); white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .location-search {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--radius-sm); padding: 8px 14px;
+      flex: 1;
+      transition: background var(--transition), border-color var(--transition);
+      position: relative;
+    }
+    .location-search:focus-within { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.5); }
+    .location-search svg { width: 15px; height: 15px; color: rgba(255,255,255,0.7); flex-shrink: 0; }
+    .location-search input {
+      flex: 1; background: none; border: none; outline: none;
+      color: white; font-size: 0.875rem; font-family: inherit;
+    }
+    .location-search input::placeholder { color: rgba(255,255,255,0.55); }
+    .location-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+      z-index: 100; overflow: hidden; max-height: 320px; overflow-y: auto;
+    }
+    .loc-search-wrap { position: relative; flex: 1; }
+    .loc-sugg-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; cursor: pointer; transition: background var(--transition);
+      text-align: left;
+    }
+    .loc-sugg-item:hover { background: var(--color-bg); }
+    .loc-sugg-rank { font-size: 1rem; font-weight: 800; width: 24px; text-align: center; }
+    .loc-sugg-name { font-size: 0.875rem; font-weight: 600; color: var(--color-text); }
+    .loc-sugg-ward { font-size: 0.72rem; color: var(--color-text-muted); }
+    .loc-sugg-score-pill {
+      margin-left: auto; padding: 2px 10px;
+      border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+    }
+
+    /* Page layout */
+    .ad-page { background: var(--color-bg); min-height: 100vh; }
+    .ad-body  { max-width: 1100px; margin: 0 auto; padding: 28px 32px; }
+
+    /* ── Map Screen Container ────────────────────────────────── */
+    .map-picker-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .map-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      background: #fafbfc;
+    }
+    .map-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--color-primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-subtitle {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .map-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .gps-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .gps-btn:hover { background: var(--color-primary-light); transform: translateY(-1px); }
+    .gps-btn:active { transform: translateY(0); }
+
+    /* Map View Box */
+    .map-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: #e5e7eb;
+    }
+    #googleMapCanvas {
+      width: 100%;
+      height: 100%;
+    }
+    .map-floating-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 320px;
+    }
+    .map-legend {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+
+    /* Detected Ward Card Bottom */
+    .map-footer-panel {
+      padding: 20px 24px;
+      background: white;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .detected-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .detected-badge {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .detected-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--color-text);
+    }
+    .detected-desc {
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .quick-chips-wrap {
+      margin-top: 16px;
+      padding: 16px 24px;
+      background: #f8fafc;
+      border-top: 1px solid var(--color-border);
+    }
+    .quick-chips-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .area-chip {
+      padding: 6px 14px;
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .area-chip:hover {
+      border-color: var(--color-primary-light);
+      color: var(--color-primary);
+      background: #eff6ff;
+    }
+
+    /* ── Score Hero Card ─────────────────────────────────────── */
+    .score-hero {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+      padding: 28px 32px; margin-bottom: 20px;
+      display: grid; grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 24px;
+    }
+    .score-ring {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .score-ring-number { font-size: 2.2rem; font-weight: 900; line-height: 1; letter-spacing: -0.05em; }
+    .score-ring-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .score-hero-info h2 { font-size: 1.6rem; font-weight: 800; color: var(--color-text); letter-spacing: -0.03em; margin-bottom: 4px; }
+    .score-hero-info .area-ward { font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px; }
+    .score-rank-display {
+      display: inline-flex; align-items: baseline; gap: 6px;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); padding: 6px 14px; margin-bottom: 12px;
+    }
+    .score-rank-num { font-size: 1.5rem; font-weight: 900; color: var(--color-primary); letter-spacing: -0.04em; }
+    .score-rank-label { font-size: 0.78rem; color: var(--color-text-secondary); }
+    .score-trend { display: inline-flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 650; }
+    .score-hero-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+
+    /* Metric cards row */
+    .metric-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 8px; }
+    .metric-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 6px; }
+    .metric-bar-wrap { height: 5px; background: var(--color-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--color-border); }
+    .metric-bar { height: 100%; border-radius: 5px; }
+    .metric-sub { font-size: 0.72rem; color: var(--color-text-muted); margin-top: 5px; }
+
+    /* Nearby areas table */
+    .nearby-table { width: 100%; border-collapse: collapse; }
+    .nearby-table th {
+      background: var(--color-bg); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--color-text-muted); font-weight: 650;
+      padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--color-border);
+    }
+    .nearby-table td { padding: 12px 14px; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+    .nearby-table tr:last-child td { border-bottom: none; }
+    .nearby-table tbody tr { transition: background var(--transition); cursor: pointer; }
+    .nearby-table tbody tr:hover { background: var(--color-bg); }
+    .nearby-table tbody tr.highlight-row { background: #eff6ff; }
+    .nearby-table tbody tr.highlight-row td { font-weight: 600; }
+
+    /* Comparison bars */
+    .compare-section { margin-bottom: 20px; }
+    .compare-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--color-border);
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-metric-label { font-size: 0.82rem; color: var(--color-text); font-weight: 500; min-width: 160px; }
+    .compare-bar-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .compare-bar-row { display: flex; align-items: center; gap: 8px; }
+    .compare-area-tag { font-size: 0.68rem; font-weight: 600; min-width: 80px; color: var(--color-text-secondary); }
+    .compare-bar-wrap { flex: 1; height: 7px; background: var(--color-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--color-border); }
+    .compare-bar { height: 100%; border-radius: 5px; transition: width 0.4s; }
+    .compare-val { font-size: 0.75rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+    @media (max-width: 900px) {
+      .score-hero { grid-template-columns: auto 1fr; }
+      .score-hero-actions { flex-direction: row; grid-column: 1 / -1; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .ad-body { padding: 16px; }
+      .score-hero { grid-template-columns: 1fr; text-align: center; }
+      .score-ring { margin: 0 auto; }
+      .score-hero-actions { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .citizen-nav { padding: 0 16px; }
+      .location-bar { padding: 14px 16px; }
+      .location-bar-left { max-width: 100%; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .compare-metric-label { min-width: 100px; }
+      .map-canvas-container { height: 360px; }
+    }
+  </style>
+</head>
+<body class="ad-page">
+
+<!-- ── Citizen Nav ───────────────────────────────────────── -->
+<nav class="citizen-nav" role="navigation" aria-label="Site navigation">
+  <a href="index.html" class="citizen-nav-logo" aria-label="Swachh Mitra Home">
+    <img src="logo.jpg" alt="Swachh Mitra"
+         onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-size:1rem;font-weight:800;color:var(--color-primary)\'>Swachh Mitra</span>')">
+  </a>
+  <div class="citizen-nav-links" id="areaNavLinks">
+    <a href="index.html">Home</a>
+    <a href="area-dashboard.html" class="active">Check Your Area</a>
+    <a href="rankings.html">Rankings</a>
+    <a href="login.html" class="btn btn-outline btn-xs" style="margin-left:8px;padding:5px 12px">Login</a>
+  </div>
+</nav>
+
+<!-- ── Location Bar ──────────────────────────────────────── -->
+<div class="location-bar" role="search" aria-label="Location search">
+  <div class="location-bar-left">
+    <span class="location-bar-label">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+      Location:
+    </span>
+    <div class="loc-search-wrap">
+      <div class="location-search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="locationInput" placeholder="Search area, ward, or locality…" autocomplete="off" aria-label="Search for your area">
+      </div>
+      <div class="location-dropdown" id="locationDropdown" style="display:none" role="listbox"></div>
+    </div>
+  </div>
+
+  <button class="gps-btn" onclick="detectLiveGPSLocation()" style="background:#2563a8">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+    Use Live GPS
+  </button>
+</div>
+
+<!-- ── Main Content ──────────────────────────────────────── -->
+<div class="ad-body" id="adBody">
+  <!-- Populated by JS -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="maps-config.js"></script>
+<script src="data.js"></script>
+<script>
+// ── Dynamic Navbar based on Auth State ────────────────────────
+function renderAreaNav() {
+  let auth = null;
+  try {
+    auth = JSON.parse(sessionStorage.getItem('sm_auth') || 'null');
+  } catch(e) {}
+
+  const navEl = document.getElementById('areaNavLinks');
+  if (!navEl) return;
+
+  if (auth && auth.loggedIn) {
+    const isCitizen = auth.role === 'user';
+    const dashHref = isCitizen ? 'citizen-dashboard.html' : 'dashboard.html';
+    const roleLabel = isCitizen ? 'Citizen' : 'Municipal Staff';
+    navEl.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="${dashHref}">Dashboard</a>
+      <a href="area-dashboard.html" class="active">Check Your Area</a>
+      <a href="rankings.html">Rankings</a>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:8px">
+        <span style="font-size:0.8rem;font-weight:600;background:var(--color-bg);padding:5px 12px;border-radius:20px;border:1px solid var(--color-border);color:var(--color-primary)">
+          👤 ${auth.name || roleLabel}
+        </span>
+        <button onclick="smLogout()" class="btn btn-outline btn-xs" style="padding:5px 12px;color:#dc2626;border-color:#fca5a5" title="Logout">
+          Logout
+        </button>
+      </div>
+    `;
+  } else {
+    navEl.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="area-dashboard.html" class="active">Check Your Area</a>
+      <a href="rankings.html">Rankings</a>
+      <a href="login.html" class="btn btn-outline btn-xs" style="margin-left:8px;padding:5px 12px">Login</a>
+    `;
+  }
+}
+
+function smLogout() {
+  sessionStorage.removeItem('sm_auth');
+  window.location.href = 'login.html';
+}
+
+renderAreaNav();
+
+let selectedArea = null;
+let mapInstance = null;
+let userMarker = null;
+let currentCoords = { lat: 26.8500, lng: 80.9450 };
+let binMarkers = [];
+
+// Re-render when Supabase data arrives
+AppState.on('data-loaded', () => {
+  if (selectedArea) {
+    selectedArea = AppState.getAreaByName(selectedArea.name) || selectedArea;
+    renderAreaDashboard();
+  }
+});
+AppState.init();
+
+// ── Check if area was passed via session or load map picker ──
+const stored = sessionStorage.getItem('sm_selected_area');
+if (stored) {
+  sessionStorage.removeItem('sm_selected_area');
+  const found = AppState.getAreaByName(stored);
+  if (found) { selectedArea = found; renderAreaDashboard(); }
+  else { renderMapLocationPicker(); }
+} else {
+  renderMapLocationPicker();
+}
+
+// ── Location search dropdown wiring ─────────────────────────
+const locInput = document.getElementById('locationInput');
+const locDrop  = document.getElementById('locationDropdown');
+
+function renderDropdown(query) {
+  const results = AppState.searchAreas(query || '');
+  const sorted  = [...AppState.areas].sort((a,b) => b.cleanlinessScore - a.cleanlinessScore);
+  if (results.length === 0) {
+    locDrop.innerHTML = `<div style="padding:12px 16px;font-size:0.82rem;color:var(--color-text-muted)">No areas found. Try: Gomti Nagar, Aliganj…</div>`;
+  } else {
+    locDrop.innerHTML = results.map(area => {
+      const rank  = sorted.findIndex(a => a.id === area.id) + 1;
+      const s     = area.cleanlinessScore;
+      const sc    = s >= 85 ? '#16a34a' : s >= 70 ? '#d97706' : '#dc2626';
+      const bg    = s >= 85 ? '#dcfce7' : s >= 70 ? '#fef3c7' : '#fee2e2';
+      return `
+        <div class="loc-sugg-item" role="option" tabindex="0"
+          onclick="selectAreaFromSearch('${area.name}')">
+          <div class="loc-sugg-rank" style="color:${sc}">#${rank}</div>
+          <div>
+            <div class="loc-sugg-name">${area.name}</div>
+            <div class="loc-sugg-ward">${area.ward}</div>
+          </div>
+          <span class="loc-sugg-score-pill" style="background:${bg};color:${sc}">${s}/100</span>
+        </div>
+      `;
+    }).join('');
+  }
+  locDrop.style.display = 'block';
+}
+
+locInput.addEventListener('input', () => {
+  if (locInput.value.trim().length >= 1) renderDropdown(locInput.value.trim());
+  else renderDropdown('');
+});
+locInput.addEventListener('focus', () => renderDropdown(locInput.value.trim() || ''));
+document.addEventListener('click', e => {
+  if (!e.target.closest('.loc-search-wrap')) locDrop.style.display = 'none';
+});
+
+function selectAreaFromSearch(name) {
+  const area = AppState.getAreaByName(name);
+  if (!area) return;
+  selectedArea = area;
+  locInput.value = area.name;
+  locDrop.style.display = 'none';
+  renderAreaDashboard();
+}
+
+// ── Map Location Picker Screen ──────────────────────────────
+function renderMapLocationPicker() {
+  selectedArea = null;
+  const nearest = AppState.getNearestArea(currentCoords.lat, currentCoords.lng);
+
+  document.getElementById('adBody').innerHTML = `
+    <div class="map-picker-card">
+      <div class="map-header">
+        <div>
+          <div class="map-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="22" height="22" style="color:var(--color-primary-light)"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+            Live Map Location Picker
+          </div>
+          <div class="map-subtitle">Click anywhere on the map or use live GPS to check your neighbourhood cleanliness</div>
+        </div>
+        <div class="map-actions">
+          <button class="gps-btn" onclick="detectLiveGPSLocation()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+            Detect My Live Location
+          </button>
+        </div>
+      </div>
+
+      <div class="map-canvas-container">
+        <div id="googleMapCanvas"></div>
+        <div class="map-floating-overlay" id="mapOverlayNote">
+          📍 <span>Click anywhere on the map to set your location pin</span>
+        </div>
+        <div class="map-legend">
+          <div style="font-weight:700;color:var(--color-text);margin-bottom:2px">Live Smart Bins</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#16a34a"></span> Normal (< 70%)</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#d97706"></span> Nearly Full (70-84%)</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#dc2626"></span> Pickup Required (85%+)</div>
+        </div>
+      </div>
+
+      <div class="map-footer-panel" id="mapFooterPanel">
+        <div class="detected-info">
+          <div class="detected-badge" style="background:#dcfce7;color:#16a34a;border:2px solid #86efac" id="panelScoreBadge">
+            ${nearest.cleanlinessScore}
+          </div>
+          <div>
+            <div class="detected-title" id="panelAreaName">${nearest.name} (${nearest.ward})</div>
+            <div class="detected-desc" id="panelAreaDesc">Nearest detected community ward based on map pin</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="confirmMapLocation('${nearest.name}')" id="confirmLocationBtn" style="padding:12px 24px">
+          View Cleanliness Dashboard →
+        </button>
+      </div>
+
+      <div class="quick-chips-wrap">
+        <div class="quick-chips-label">Or Choose A Popular Monitored Area:</div>
+        <div class="quick-chips">
+          ${AppState.areas.map(a => `
+            <button class="area-chip" onclick="focusAreaOnMap('${a.name}', ${a.lat}, ${a.lng})">
+              <span>📍 ${a.name}</span>
+              <span style="font-size:0.7rem;color:#16a34a;font-weight:700">${a.cleanlinessScore}/100</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  initGoogleMap();
+}
+
+// ── Google Maps Initialization ──────────────────────────────
+function initGoogleMap() {
+  const canvas = document.getElementById('googleMapCanvas');
+  if (!canvas) return;
+
+  if (window.google && window.google.maps) {
+    loadMapInstance();
+  } else {
+    // Dynamically load Google Maps script
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&callback=initGoogleMapFromScript`;
+    script.async = true;
+    script.defer = true;
+    window.initGoogleMapFromScript = loadMapInstance;
+    document.head.appendChild(script);
+  }
+}
+
+function loadMapInstance() {
+  const canvas = document.getElementById('googleMapCanvas');
+  if (!canvas || !window.google || !window.google.maps) return;
+
+  mapInstance = new google.maps.Map(canvas, {
+    center: currentCoords,
+    zoom: 13,
+    styles: [
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+      { featureType: "transit", elementType: "labels", stylers: [{ visibility: "simplified" }] }
+    ],
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+  });
+
+  // User Pin Marker
+  userMarker = new google.maps.Marker({
+    position: currentCoords,
+    map: mapInstance,
+    title: "Your Location",
+    draggable: true,
+    animation: google.maps.Animation.DROP,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 10,
+      fillColor: "#2563a8",
+      fillOpacity: 1,
+      strokeWeight: 3,
+      strokeColor: "#ffffff",
+    }
+  });
+
+  // User marker drag end
+  userMarker.addListener('dragend', e => {
+    updateCoordinates(e.latLng.lat(), e.latLng.lng());
+  });
+
+  // Click anywhere on map to move pin
+  mapInstance.addListener('click', e => {
+    userMarker.setPosition(e.latLng);
+    updateCoordinates(e.latLng.lat(), e.latLng.lng());
+  });
+
+  // Render Smart Bin Markers
+  renderBinMarkersOnMap();
+}
+
+function renderBinMarkersOnMap() {
+  if (!mapInstance || !window.google) return;
+
+  // Clear existing
+  binMarkers.forEach(m => m.setMap(null));
+  binMarkers = [];
+
+  const infoWindow = new google.maps.InfoWindow();
+
+  AppState.bins.forEach(bin => {
+    if (!bin.lat || !bin.lng) return;
+
+    const status = AppState.getStatus(bin.fillLevel);
+    const color  = status === 'Normal' ? '#16a34a' : status === 'Nearly Full' ? '#d97706' : '#dc2626';
+
+    const marker = new google.maps.Marker({
+      position: { lat: bin.lat, lng: bin.lng },
+      map: mapInstance,
+      title: `Bin #${bin.binNumber} - ${bin.area}`,
+      icon: {
+        path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+        scale: 5,
+        fillColor: color,
+        fillOpacity: 0.95,
+        strokeWeight: 1.5,
+        strokeColor: "#ffffff",
+      }
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.setContent(`
+        <div style="padding:6px;font-family:Inter,sans-serif;line-height:1.4">
+          <div style="font-weight:700;font-size:0.9rem;color:#0f172a">🗑️ Smart Bin #${bin.binNumber}</div>
+          <div style="font-size:0.78rem;color:#64748b;margin-bottom:4px">${bin.location} (${bin.area})</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+            <span style="font-size:0.75rem;padding:2px 8px;border-radius:12px;background:${color}20;color:${color};font-weight:700">
+              ${bin.fillLevel}% Full (${status})
+            </span>
+            <span style="font-size:0.75rem;color:#475569">${bin.wasteType} Waste</span>
+          </div>
+        </div>
+      `);
+      infoWindow.open(mapInstance, marker);
+    });
+
+    binMarkers.push(marker);
+  });
+}
+
+function updateCoordinates(lat, lng) {
+  currentCoords = { lat, lng };
+  const nearest = AppState.getNearestArea(lat, lng);
+
+  const scoreBadge = document.getElementById('panelScoreBadge');
+  const nameEl     = document.getElementById('panelAreaName');
+  const descEl     = document.getElementById('panelAreaDesc');
+  const btnEl      = document.getElementById('confirmLocationBtn');
+
+  if (scoreBadge && nameEl && btnEl) {
+    const s = nearest.cleanlinessScore;
+    const color = s >= 85 ? '#16a34a' : s >= 70 ? '#d97706' : '#dc2626';
+    const bg    = s >= 85 ? '#dcfce7' : s >= 70 ? '#fef3c7' : '#fee2e2';
+
+    scoreBadge.textContent = s;
+    scoreBadge.style.background = bg;
+    scoreBadge.style.color = color;
+    scoreBadge.style.borderColor = color;
+
+    nameEl.textContent = `${nearest.name} (${nearest.ward})`;
+    descEl.textContent = `📍 Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)} · Nearest Ward detected`;
+
+    btnEl.onclick = () => confirmMapLocation(nearest.name);
+    btnEl.textContent = `View Cleanliness Dashboard for ${nearest.name} →`;
+  }
+}
+
+function focusAreaOnMap(areaName, lat, lng) {
+  if (mapInstance && userMarker) {
+    const pos = { lat, lng };
+    mapInstance.panTo(pos);
+    mapInstance.setZoom(14);
+    userMarker.setPosition(pos);
+    updateCoordinates(lat, lng);
+  } else {
+    confirmMapLocation(areaName);
+  }
+}
+
+function detectLiveGPSLocation() {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+
+  const btn = document.querySelector('.gps-btn');
+  if (btn) btn.innerHTML = `⏳ Locating…`;
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      if (btn) btn.innerHTML = `📍 GPS Active`;
+
+      if (mapInstance && userMarker) {
+        const coords = { lat, lng };
+        mapInstance.panTo(coords);
+        mapInstance.setZoom(15);
+        userMarker.setPosition(coords);
+        updateCoordinates(lat, lng);
+      } else {
+        const nearest = AppState.getNearestArea(lat, lng);
+        confirmMapLocation(nearest.name);
+      }
+    },
+    err => {
+      if (btn) btn.innerHTML = `📍 Use Live GPS`;
+      alert("Could not fetch GPS location. Please select your location on the map.");
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+function confirmMapLocation(areaName) {
+  const area = AppState.getAreaByName(areaName);
+  if (area) {
+    selectedArea = area;
+    locInput.value = area.name;
+    renderAreaDashboard();
+  }
+}
+
+// ── Area Cleanliness Dashboard Render ──────────────────────
+function renderAreaDashboard() {
+  const area = selectedArea;
+  if (!area) { renderMapLocationPicker(); return; }
+
+  const rank    = AppState.getAreaRank(area.id);
+  const total   = AppState.areas.length;
+  const nearby  = AppState.getNearbyAreas(area.id);
+  const score   = area.cleanlinessScore;
+  const sClass  = score >= 85 ? 'normal' : score >= 70 ? 'warning' : 'danger';
+  const sColor  = score >= 85 ? 'var(--color-normal)' : score >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+  const sBg     = score >= 85 ? '#dcfce7' : score >= 70 ? '#fef3c7' : '#fee2e2';
+  const trendIcon  = area.trend === 'up' ? '<span style="color:#16a34a">↑ Improving</span>' : area.trend === 'down' ? '<span style="color:#dc2626">↓ Declining</span>' : '<span style="color:#94a3b8">→ Stable</span>';
+  const dumpLabel  = area.openDumpingScore <= 5 ? 'Very Low' : area.openDumpingScore <= 15 ? 'Low' : area.openDumpingScore <= 25 ? 'Moderate' : 'High';
+  const dumpColor  = area.openDumpingScore <= 5 ? 'var(--color-normal)' : area.openDumpingScore <= 15 ? 'var(--color-normal)' : area.openDumpingScore <= 25 ? 'var(--color-warning)' : 'var(--color-danger)';
+
+  document.getElementById('adBody').innerHTML = `
+
+    <!-- Score Hero Card -->
+    <div class="score-hero">
+      <div class="score-ring" style="background:${sBg};border:3px solid ${sColor}">
+        <div class="score-ring-number" style="color:${sColor}">${score}</div>
+        <div class="score-ring-label" style="color:${sColor}">/ 100</div>
+      </div>
+      <div class="score-hero-info">
+        <h2>${area.name}</h2>
+        <div class="area-ward">${area.ward} · <span>${area.description}</span></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px">
+          <div class="score-rank-display">
+            <span class="score-rank-num">#${rank}</span>
+            <span class="score-rank-label">of ${total} monitored areas</span>
+          </div>
+          <div class="score-trend">${trendIcon}</div>
+          <span class="badge badge-${sClass}" style="font-size:0.78rem">
+            <span class="badge-dot"></span>
+            ${score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : 'Needs Attention'}
+          </span>
+        </div>
+        ${area.highlights && area.highlights.length ? `
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+            ${area.highlights.map(h => `<span style="font-size:0.72rem;background:#f0fdf4;color:#15803d;padding:3px 10px;border-radius:20px;border:1px solid #bbf7d0;font-weight:500">✓ ${h}</span>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+      <div class="score-hero-actions">
+        <button onclick="renderMapLocationPicker()" class="btn btn-primary btn-sm" style="display:flex;align-items:center;gap:6px">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+          Change on Live Map
+        </button>
+        <a href="rankings.html" class="btn btn-outline btn-sm">View All Rankings</a>
+      </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">♻️ Waste Segregation</div>
+        <div class="metric-value" style="color:${area.segregationScore >= 85 ? 'var(--color-normal)' : area.segregationScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.segregationScore}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.segregationScore}%;background:${area.segregationScore >= 85 ? 'var(--color-normal)' : area.segregationScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">Wet vs dry waste correctly separated</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">🚛 Collection Efficiency</div>
+        <div class="metric-value" style="color:${area.collectionScore >= 85 ? 'var(--color-normal)' : area.collectionScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.collectionScore}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.collectionScore}%;background:${area.collectionScore >= 85 ? 'var(--color-normal)' : area.collectionScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">On-time pickups completed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">📊 Overflow Control</div>
+        <div class="metric-value" style="color:${area.overflowScore >= 85 ? 'var(--color-normal)' : area.overflowScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}">
+          ${area.overflowScore}<span style="font-size:1rem;color:var(--color-text-muted);font-weight:500">%</span>
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${area.overflowScore}%;background:${area.overflowScore >= 85 ? 'var(--color-normal)' : area.overflowScore >= 70 ? 'var(--color-warning)' : 'var(--color-danger)'}"></div></div>
+        <div class="metric-sub">Bins prevented from overflowing</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">🚫 Open Dumping</div>
+        <div class="metric-value" style="color:${dumpColor}">
+          ${dumpLabel}
+        </div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${Math.min(100, area.openDumpingScore * 3.5)}%;background:${dumpColor}"></div></div>
+        <div class="metric-sub">${area.openDumpingScore} spots flagged this month</div>
+      </div>
+    </div>
+
+    <!-- Comparison with Other Areas -->
+    <div class="card compare-section">
+      <div class="card-header">
+        <div>
+          <div class="card-title">How ${area.name} Compares to Other Areas</div>
+          <div class="section-subtitle">Performance breakdown across monitored community wards</div>
+        </div>
+      </div>
+      <div class="card-body-lg compare-section">
+        ${renderComparisonRows(area, nearby)}
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div style="text-align:center;padding:20px;font-size:0.75rem;color:var(--color-text-muted)">
+      <span style="background:var(--color-bg);border:1px solid var(--color-border);padding:5px 14px;border-radius:20px">
+        📊 Smart Cleanliness Index · <a href="index.html" style="color:var(--color-primary-light);text-decoration:none">Learn more</a>
+      </span>
+    </div>
+
+  `;
+}
+
+function renderComparisonRows(area, nearby) {
+  const allAreas = AppState.areas;
+  const cityAvg  = (key) => Math.round(allAreas.reduce((s,a) => s + a[key], 0) / allAreas.length);
+  const topArea  = [...allAreas].sort((a,b) => b.cleanlinessScore - a.cleanlinessScore)[0];
+
+  const metrics = [
+    { label: '♻️ Waste Segregation',   key: 'segregationScore' },
+    { label: '🚛 Collection Efficiency',key: 'collectionScore'  },
+    { label: '📊 Overflow Management', key: 'overflowScore'    },
+    { label: '🏆 Overall Score',        key: 'cleanlinessScore' },
+  ];
+
+  return metrics.map(m => {
+    const aVal = area[m.key];
+    const avg  = cityAvg(m.key);
+    const top  = topArea[m.key];
+    const aCol = aVal >= 85 ? 'var(--color-normal)' : aVal >= 70 ? 'var(--color-warning)' : 'var(--color-danger)';
+
+    return `
+      <div class="compare-row">
+        <div class="compare-metric-label">${m.label}</div>
+        <div class="compare-bar-group">
+          <div class="compare-bar-row">
+            <span class="compare-area-tag" style="color:var(--color-primary);font-weight:700">${area.name}</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${aVal}%;background:${aCol}"></div></div>
+            <span class="compare-val" style="color:${aCol}">${aVal}%</span>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-area-tag">Average</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${avg}%;background:#94a3b8"></div></div>
+            <span class="compare-val" style="color:#64748b">${avg}%</span>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-area-tag" style="color:#15803d">#1 Top Area</span>
+            <div class="compare-bar-wrap"><div class="compare-bar" style="width:${top}%;background:#86efac"></div></div>
+            <span class="compare-val" style="color:#15803d">${top}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+</script>
+
+</body>
+</html>

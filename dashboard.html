@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Municipal Dashboard – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell" id="app-shell"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+// ── Init page shell ──────────────────────────────────────────
+initPage({
+  activeNav: 'dashboard',
+  title: 'Municipal Dashboard',
+  subtitle: 'Real-time overview of community waste collection and bin status.',
+  showSearch: true,
+  searchPlaceholder: 'Search bin, area...',
+});
+
+// Render immediately with local data, then re-render when Supabase loads
+renderDashboard();
+AppState.on('data-loaded', () => renderDashboard());
+AppState.init();
+
+
+function renderDashboard() {
+  const body  = document.getElementById('page-body');
+  const stats = AppState.getDashboardStats();
+  const bins  = AppState.bins;
+
+  const urgentBins = bins
+    .filter(b => AppState.getStatus(b.fillLevel) === 'Pickup Required' || (b.fillLevel >= 80 && b.predictedFullTime))
+    .sort((a, b) => b.fillLevel - a.fillLevel)
+    .slice(0, 5);
+
+  body.innerHTML = `
+    <!-- KPI Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Bins</div>
+        <div class="kpi-value">${stats.total}</div>
+        <div class="kpi-sub">Community waste points monitored</div>
+        <div class="kpi-icon kpi-info">${Icons.bins}</div>
+      </div>
+      <div class="kpi-card kpi-normal">
+        <div class="kpi-label">Normal</div>
+        <div class="kpi-value">${stats.normal}</div>
+        <div class="kpi-sub">Below 70% fill level</div>
+        <div class="kpi-icon">${Icons.check}</div>
+      </div>
+      <div class="kpi-card kpi-warning">
+        <div class="kpi-label">Nearly Full</div>
+        <div class="kpi-value">${stats.nearFull}</div>
+        <div class="kpi-sub">70–84% fill level</div>
+        <div class="kpi-icon">${Icons.alert}</div>
+      </div>
+      <div class="kpi-card kpi-danger">
+        <div class="kpi-label">Pickup Required</div>
+        <div class="kpi-value">${stats.pickup}</div>
+        <div class="kpi-sub">85%+ fill level</div>
+        <div class="kpi-icon">${Icons.alert}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Predicted Overflow</div>
+        <div class="kpi-value" style="color:var(--color-primary-light)">${stats.predicted}</div>
+        <div class="kpi-sub">Bins expected full within 2 hours</div>
+        <div class="kpi-icon kpi-info">${Icons.clock}</div>
+      </div>
+    </div>
+
+    <!-- Urgent Alerts -->
+    <div class="card mb-24">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🔴 Urgent Collection Alerts</div>
+          <div class="section-subtitle">Highest-priority bins requiring immediate action</div>
+        </div>
+        <a href="collection.html" class="btn btn-outline btn-sm">${Icons.truck} View Collection Tasks</a>
+      </div>
+      <div class="card-body-lg" id="urgentAlerts">
+        ${urgentBins.length === 0 ? `
+          <div class="empty-state">
+            ${Icons.check}
+            <div class="empty-state-title">All Clear</div>
+            <div class="empty-state-desc">No urgent pickup alerts at this time.</div>
+          </div>
+        ` : urgentBins.map(bin => {
+          const status = AppState.getStatus(bin.fillLevel);
+          const isDanger = status === 'Pickup Required';
+          return `
+            <div class="alert-card ${isDanger ? 'alert-danger' : 'alert-warning'}">
+              <div class="alert-icon">${Icons.alert}</div>
+              <div class="alert-info">
+                <div class="alert-title">Bin #${bin.binNumber} — ${bin.area}</div>
+                <div class="alert-detail">
+                  ${bin.fillLevel}% full · ${bin.wasteType} Waste
+                  ${bin.predictedFullTime && bin.predictedFullTime !== 'Overdue' ? ` · Predicted full in ${bin.predictedFullTime}` : ''}
+                  · ${bin.location}
+                </div>
+              </div>
+              <div class="alert-actions">
+                ${getPriorityBadge('High')}
+                <button class="btn btn-sm ${isDanger ? 'btn-danger' : 'btn-accent'}" onclick="openBinModal(${bin.id})">
+                  ${Icons.eye} View
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Bin Status Overview -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Bin Status Overview</div>
+          <div class="section-subtitle">All monitored community waste bins</div>
+        </div>
+        <div class="flex gap-8 items-center flex-wrap">
+          <div class="filter-bar" id="dashFilterBar">
+            <button class="filter-btn active" data-filter="all" onclick="dashFilter(this,'all')">All (${bins.length})</button>
+            <button class="filter-btn" data-filter="Normal" onclick="dashFilter(this,'Normal')">Normal (${stats.normal})</button>
+            <button class="filter-btn" data-filter="Nearly Full" onclick="dashFilter(this,'Nearly Full')">Nearly Full (${stats.nearFull})</button>
+            <button class="filter-btn" data-filter="Pickup Required" onclick="dashFilter(this,'Pickup Required')">Pickup Required (${stats.pickup})</button>
+          </div>
+          <a href="bins.html" class="btn btn-outline btn-sm">Full View →</a>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="dashBinTable" aria-label="Bin status overview">
+          <thead>
+            <tr>
+              <th>Bin #</th>
+              <th>Area</th>
+              <th>Waste Type</th>
+              <th>Fill Level</th>
+              <th>Status</th>
+              <th>Predicted Full</th>
+              <th>Last Pickup</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dashBinTableBody">
+            ${renderDashBinRows(bins)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Wire up search
+  const searchInput = document.getElementById('globalSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = AppState.bins.filter(b =>
+        b.binNumber.toLowerCase().includes(q) ||
+        b.area.toLowerCase().includes(q) ||
+        b.location.toLowerCase().includes(q)
+      );
+      document.getElementById('dashBinTableBody').innerHTML = renderDashBinRows(filtered);
+    });
+  }
+}
+
+function renderDashBinRows(bins) {
+  if (bins.length === 0) return `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--color-text-muted)">No bins match this filter.</td></tr>`;
+  return bins.map(bin => `
+    <tr>
+      <td class="font-bold">#${bin.binNumber}</td>
+      <td>${bin.area}</td>
+      <td><span class="waste-type-badge ${bin.wasteType === 'Wet' ? 'waste-wet' : 'waste-dry'}">${bin.wasteType}</span></td>
+      <td>
+        <div style="min-width:120px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span class="fill-pct ${getStatusClass(bin.fillLevel)}" style="font-size:0.85rem">${bin.fillLevel}%</span>
+          </div>
+          ${buildProgressBar(bin.fillLevel)}
+        </div>
+      </td>
+      <td>${getStatusBadge(bin.fillLevel)}</td>
+      <td class="td-muted">${bin.predictedFullTime || '—'}</td>
+      <td class="td-muted">${bin.lastPickup}</td>
+      <td>
+        <button class="btn btn-ghost btn-xs" onclick="openBinModal(${bin.id})" aria-label="View bin ${bin.binNumber} details">
+          ${Icons.eye} View
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function dashFilter(btn, filter) {
+  document.querySelectorAll('#dashFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = filter === 'all' ? AppState.bins : AppState.bins.filter(b => AppState.getStatus(b.fillLevel) === filter);
+  document.getElementById('dashBinTableBody').innerHTML = renderDashBinRows(filtered);
+}
+
+// Re-render on state changes
+AppState.on('bin-update', () => renderDashboard());
+</script>
+</body>
+</html>

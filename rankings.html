@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Area Cleanliness Rankings – Swachh Mitra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--color-bg);
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Horizontal Navbar ────────────────────────────────── */
+    .top-nav {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: 64px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+    .top-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .top-nav-logo img {
+      height: 38px;
+      object-fit: contain;
+    }
+    .top-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .top-nav-links a {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+      padding: 6px 4px;
+    }
+    .top-nav-links a:hover,
+    .top-nav-links a.active {
+      color: var(--color-primary-light);
+    }
+
+    /* ── Main Full-Width Container ────────────────────────────── */
+    .rankings-container {
+      max-width: 1140px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+      flex: 1;
+    }
+
+    .page-header-block {
+      margin-bottom: 28px;
+    }
+    .page-main-title {
+      font-size: 1.85rem;
+      font-weight: 850;
+      color: var(--color-primary-dark);
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+    .page-main-sub {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* ── Main Rankings Card ───────────────────────────────────── */
+    .rankings-main-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .rankings-header-bar {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-border);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .rankings-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .rankings-table th {
+      padding: 14px 22px;
+      background: var(--color-bg);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .rankings-table td {
+      padding: 18px 22px;
+      font-size: 0.9rem;
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    .rankings-table tr:last-child td {
+      border-bottom: none;
+    }
+    .rankings-table tr:hover td {
+      background: rgba(241,245,249,0.5);
+    }
+    .rank-num-badge {
+      font-size: 1.2rem;
+      font-weight: 800;
+      width: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .score-badge.high { background: #dcfce7; color: #15803d; }
+    .score-badge.med  { background: #fef3c7; color: #b45309; }
+    .score-badge.low  { background: #fee2e2; color: #b91c1c; }
+
+    .score-bar-mini {
+      width: 120px;
+      height: 5px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .page-footer {
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: 20px 32px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .top-nav { padding: 0 16px; }
+      .rankings-container { padding: 24px 16px 40px; }
+      .rankings-table th:nth-child(4), .rankings-table td:nth-child(4),
+      .rankings-table th:nth-child(5), .rankings-table td:nth-child(5),
+      .rankings-table th:nth-child(6), .rankings-table td:nth-child(6) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Horizontal Nav ──────────────────────────────────────── -->
+<nav class="top-nav" role="navigation" aria-label="Main Navigation">
+  <a href="index.html" class="top-nav-logo" aria-label="Swachh Mitra Home">
+    <img src="logo.jpg" alt="Swachh Mitra Logo" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\'font-size:1.1rem;font-weight:800;color:var(--color-primary)\'>Swachh Mitra</span>')">
+  </a>
+  <div class="top-nav-links" id="rankingsNavLinks">
+    <a href="index.html">Home</a>
+    <a href="area-dashboard.html">Check Your Area</a>
+    <a href="rankings.html" class="active">Area Rankings</a>
+    <a href="login.html" class="btn btn-outline btn-xs" style="margin-left:6px;padding:6px 14px">Login</a>
+  </div>
+</nav>
+
+<!-- ── Main Content Container ──────────────────────────────────── -->
+<div class="rankings-container">
+
+  <!-- Header Block -->
+  <div class="page-header-block">
+    <h1 class="page-main-title">Area Cleanliness Rankings</h1>
+    <p class="page-main-sub">Real-time cleanliness score leaderboard and performance metrics across all monitored community wards.</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid mb-24" id="kpiGrid">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Main Leaderboard Card -->
+  <div class="rankings-main-card">
+    <div class="rankings-header-bar">
+      <div>
+        <div class="card-title" style="font-size:1.15rem">🏆 Clean Neighbourhood Leaderboard</div>
+        <div class="section-subtitle">Rankings based on IoT sensor data, waste segregation compliance, and collection response.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input
+          type="text"
+          id="rankSearch"
+          placeholder="Search neighbourhood or ward…"
+          oninput="filterRankings(this.value)"
+          style="padding:9px 14px;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:0.85rem;background:var(--color-bg);outline:none;width:220px"
+        >
+        <a href="area-dashboard.html" class="btn btn-primary btn-sm" style="display:flex;align-items:center;gap:6px">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+          Live Map View
+        </a>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="rankings-table">
+        <thead>
+          <tr>
+            <th style="width:70px">Rank</th>
+            <th>Neighbourhood</th>
+            <th>Cleanliness Score</th>
+            <th>Trend</th>
+            <th>Waste Segregation</th>
+            <th>Collection Rate</th>
+            <th style="text-align:right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="rankingsTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="page-footer">
+  © 2026 Swachh Mitra
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="data.js"></script>
+<script>
+// ── Dynamic Navbar based on Auth State ────────────────────────
+function renderNav() {
+  let auth = null;
+  try {
+    auth = JSON.parse(sessionStorage.getItem('sm_auth') || 'null');
+  } catch(e) {}
+
+  const navEl = document.getElementById('rankingsNavLinks');
+  if (!navEl) return;
+
+  if (auth && auth.loggedIn) {
+    const isCitizen = auth.role === 'user';
+    const dashHref = isCitizen ? 'citizen-dashboard.html' : 'dashboard.html';
+    const roleLabel = isCitizen ? 'Citizen' : 'Municipal Staff';
+    navEl.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="${dashHref}">Dashboard</a>
+      <a href="area-dashboard.html">Check Your Area</a>
+      <a href="rankings.html" class="active">Area Rankings</a>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:6px">
+        <span style="font-size:0.8rem;font-weight:600;background:var(--color-bg);padding:5px 12px;border-radius:20px;border:1px solid var(--color-border);color:var(--color-primary)">
+          👤 ${auth.name || roleLabel}
+        </span>
+        <button onclick="smLogout()" class="btn btn-outline btn-xs" style="padding:5px 12px;color:#dc2626;border-color:#fca5a5" title="Logout">
+          Logout
+        </button>
+      </div>
+    `;
+  } else {
+    navEl.innerHTML = `
+      <a href="index.html">Home</a>
+      <a href="area-dashboard.html">Check Your Area</a>
+      <a href="rankings.html" class="active">Area Rankings</a>
+      <a href="login.html" class="btn btn-outline btn-xs" style="margin-left:6px;padding:6px 14px">Login</a>
+    `;
+  }
+}
+
+function smLogout() {
+  sessionStorage.removeItem('sm_auth');
+  window.location.href = 'login.html';
+}
+
+renderNav();
+
+// Render rankings immediately with local data & re-render when Supabase data loads
+renderRankings();
+AppState.on('data-loaded', () => renderRankings());
+AppState.init();
+
+function renderRankings() {
+  const areas = [...AppState.areas].sort((a, b) => b.cleanlinessScore - a.cleanlinessScore);
+  const avgScore = Math.round(areas.reduce((s,a)=>s+a.cleanlinessScore,0)/areas.length);
+
+  // Render KPI Grid
+  const kpiEl = document.getElementById('kpiGrid');
+  if (kpiEl) {
+    kpiEl.innerHTML = `
+      <div class="kpi-card kpi-normal">
+        <div class="kpi-label">#1 Top Ranked Area</div>
+        <div class="kpi-value" style="font-size:1.35rem;color:#16a34a">${areas[0]?.name || 'Gomti Nagar'}</div>
+        <div class="kpi-sub">Highest cleanliness score (${areas[0]?.cleanlinessScore || 94}/100)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Areas Tracked</div>
+        <div class="kpi-value">${areas.length}</div>
+        <div class="kpi-sub">Community wards monitored</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Average Cleanliness</div>
+        <div class="kpi-value">${avgScore}/100</div>
+        <div class="kpi-sub">City-wide composite index</div>
+      </div>
+    `;
+  }
+
+  // Render Table
+  const tbody = document.getElementById('rankingsTableBody');
+  if (tbody) {
+    tbody.innerHTML = renderRows(areas);
+  }
+}
+
+function renderRows(areasList) {
+  const medals = ['🥇', '🥈', '🥉'];
+  return areasList.map((area, i) => {
+    const score = area.cleanlinessScore;
+    const scoreCls = score >= 85 ? 'high' : score >= 70 ? 'med' : 'low';
+    const barColor = score >= 85 ? '#16a34a' : score >= 70 ? '#d97706' : '#dc2626';
+    const trendHtml = area.trend === 'up'
+      ? `<span style="color:#16a34a;font-weight:700">↑ Up</span>`
+      : area.trend === 'down'
+      ? `<span style="color:#dc2626;font-weight:700">↓ Down</span>`
+      : `<span style="color:#94a3b8;font-weight:500">→ Same</span>`;
+
+    return `
+      <tr>
+        <td>
+          <span class="rank-num-badge">${i < 3 ? medals[i] : '#' + (i + 1)}</span>
+        </td>
+        <td>
+          <div style="font-weight:750;color:var(--color-text);font-size:0.95rem">${area.name}</div>
+          <div style="font-size:0.75rem;color:var(--color-text-muted)">${area.ward}</div>
+        </td>
+        <td>
+          <span class="score-badge ${scoreCls}">${score}/100</span>
+          <div class="score-bar-mini">
+            <div class="score-bar-fill" style="width:${score}%;background:${barColor}"></div>
+          </div>
+        </td>
+        <td>${trendHtml}</td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem">${area.segregationScore || 88}%</div>
+          <div style="font-size:0.72rem;color:var(--color-text-muted)">Compliance</div>
+        </td>
+        <td>
+          <div style="font-weight:700;font-size:0.88rem">${area.collectionScore || 90}%</div>
+          <div style="font-size:0.72rem;color:var(--color-text-muted)">Efficiency</div>
+        </td>
+        <td style="text-align:right">
+          <button class="btn btn-outline btn-xs" onclick="goToArea('${area.name}')" style="display:inline-flex;align-items:center;gap:4px">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+            View Map
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterRankings(query) {
+  const filtered = AppState.searchAreas(query);
+  const tbody = document.getElementById('rankingsTableBody');
+  if (tbody) {
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--color-text-muted)">No neighbourhoods matching "${query}"</td></tr>`;
+    } else {
+      tbody.innerHTML = renderRows(filtered);
+    }
+  }
+}
+
+function goToArea(areaName) {
+  sessionStorage.setItem('sm_selected_area', areaName);
+  window.location.href = 'area-dashboard.html';
+}
+</script>
+</body>
+</html>
