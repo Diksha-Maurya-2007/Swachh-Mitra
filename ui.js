@@ -24,8 +24,12 @@ const Icons = {
   truck:     `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
   location:  `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>`,
   clock:     `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+<<<<<<< HEAD
   leaf:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
 
+=======
+  leaf:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8C8 10 5.9 16.17 3.82 19.2A3 3 0 006.46 22a3 3 0 001.5-.4C9.4 20.4 12 18 13 14c5 1 6-2 6-2S17 12 17 8z"/><path d="M3.7 19.3L16 7"/></svg>`,
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   star:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
   plus:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`,
   minus:     `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>`,
@@ -38,15 +42,19 @@ const Icons = {
   flag:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
   area:      `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>`,
   citizen:   `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+<<<<<<< HEAD
   logout:    `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>`,
   complaint: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`,
   guide:     `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>`,
   trophy:    `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 21h8m-4-4v4M6 4h12v4a6 6 0 01-12 0V4zM4 6H2a2 2 0 000 4h2M20 6h2a2 2 0 010 4h-2"/></svg>`,
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 };
 
 // ── Navigation Config ──────────────────────────────────────────
 const NAV_ITEMS = [
   // Citizen section
+<<<<<<< HEAD
   { id: "citizen-dashboard", label: "Citizen Dashboard",  icon: "dashboard", href: "citizen-dashboard.html", section: "citizen" },
   { id: "area-dashboard",    label: "Check Your Area",     icon: "location",  href: "area-dashboard.html",    section: "citizen" },
   { id: "rankings",          label: "Area Rankings",       icon: "rankings",  href: "rankings.html",          section: "citizen" },
@@ -58,10 +66,21 @@ const NAV_ITEMS = [
   { id: "collection",        label: "Collection Tasks",    icon: "collection", href: "collection.html",         section: "municipal" },
   { id: "rankings-muni",     label: "Area Rankings",       icon: "rankings",   href: "rankings.html",           section: "municipal" },
   { id: "settings",          label: "Settings",            icon: "settings",   href: "settings.html",           section: "municipal" },
+=======
+  { id: "area-dashboard", label: "Check Your Area",  icon: "area",       href: "area-dashboard.html", section: "citizen" },
+  // Municipal section
+  { id: "dashboard",      label: "Dashboard",         icon: "dashboard",  href: "dashboard.html",       section: "municipal" },
+  { id: "bins",           label: "Smart Bins",         icon: "bins",       href: "bins.html",             section: "municipal" },
+  { id: "collection",     label: "Collection",         icon: "collection", href: "collection.html",       section: "municipal" },
+  { id: "rankings",       label: "Area Rankings",      icon: "rankings",   href: "rankings.html",         section: "municipal" },
+  { id: "simulator",      label: "Sensor Simulator",   icon: "simulator",  href: "simulator.html",        section: "municipal" },
+  { id: "settings",       label: "Settings",           icon: "settings",   href: "settings.html",         section: "municipal" },
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 ];
 
 // ── Sidebar Builder ────────────────────────────────────────────
 function buildSidebar(activeId) {
+<<<<<<< HEAD
   let auth = null;
   try {
     auth = JSON.parse(sessionStorage.getItem('sm_auth') || 'null');
@@ -86,11 +105,19 @@ function buildSidebar(activeId) {
     { id: "rankings",       label: "Area Rankings",    icon: "rankings",   href: "rankings.html" },
     { id: "settings",       label: "Settings",         icon: "settings",   href: "settings.html" },
   ];
+=======
+  const citizenLinks    = NAV_ITEMS.filter(i => i.section === 'citizen');
+  const municipalLinks  = NAV_ITEMS.filter(i => i.section === 'municipal');
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 
   const renderLink = item => `
     <button
       class="sidebar-link ${item.id === activeId ? 'active' : ''}"
+<<<<<<< HEAD
       onclick="${item.href.startsWith('javascript:') ? item.href.replace('javascript:','') : `navigate('${item.href}')`}"
+=======
+      onclick="navigate('${item.href}')"
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       aria-label="${item.label}"
       aria-current="${item.id === activeId ? 'page' : 'false'}"
     >
@@ -99,6 +126,7 @@ function buildSidebar(activeId) {
     </button>
   `;
 
+<<<<<<< HEAD
   let navBody = '';
   if (isCitizen) {
     navBody = `
@@ -144,6 +172,42 @@ function buildSidebar(activeId) {
   return `
     <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
       <div class="sidebar-logo" onclick="navigate('index.html')" style="cursor:pointer">
+=======
+  // Read auth state from sessionStorage
+  let authChip = '';
+  try {
+    const auth = JSON.parse(sessionStorage.getItem('sm_auth') || 'null');
+    if (auth && auth.loggedIn) {
+      const roleLabel = auth.role === 'municipal' ? '🏛️ Municipal Corp' : '👤 Citizen';
+      authChip = `
+        <div style="margin-bottom:10px;padding:10px 12px;background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid rgba(255,255,255,0.1)">
+          <div style="font-size:0.7rem;color:var(--sidebar-text);opacity:0.65;margin-bottom:3px">Signed in as</div>
+          <div style="font-size:0.78rem;font-weight:600;color:#fff;margin-bottom:1px">${roleLabel}</div>
+          <div style="font-size:0.68rem;color:var(--sidebar-text);opacity:0.6;word-break:break-all">${auth.email}</div>
+        </div>
+        <button onclick="smLogout()" style="width:100%;padding:8px 12px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.3);border-radius:6px;color:#fca5a5;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.2s;display:flex;align-items:center;gap:6px;justify-content:center"
+          onmouseover="this.style.background='rgba(220,38,38,0.28)'" onmouseout="this.style.background='rgba(220,38,38,0.18)'"
+          aria-label="Logout">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Logout
+        </button>
+      `;
+    } else {
+      authChip = `
+        <a href="login.html" style="width:100%;padding:8px 12px;background:rgba(37,99,168,0.3);border:1px solid rgba(37,99,168,0.4);border-radius:6px;color:#93c5fd;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.2s;display:flex;align-items:center;gap:6px;justify-content:center;text-decoration:none;box-sizing:border-box"
+          onmouseover="this.style.background='rgba(37,99,168,0.45)'" onmouseout="this.style.background='rgba(37,99,168,0.3)'"
+          aria-label="Login">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          Login
+        </a>
+      `;
+    }
+  } catch(e) {}
+
+  return `
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-logo">
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
         <img src="logo.jpg" alt="Swachh Mitra Logo" class="sidebar-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="sidebar-logo-fallback" style="display:none;align-items:center;gap:10px">
           <div class="logo-icon">${Icons.leaf}</div>
@@ -154,6 +218,7 @@ function buildSidebar(activeId) {
         </div>
       </div>
       <nav class="sidebar-nav">
+<<<<<<< HEAD
         ${navBody}
         <div style="margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08)">
           ${authFooter}
@@ -161,6 +226,18 @@ function buildSidebar(activeId) {
       </nav>
       <div class="sidebar-footer">
         <div style="font-weight:600;color:#f1f5f9">© 2026 Swachh Mitra</div>
+=======
+        <div class="sidebar-section-label">Citizen</div>
+        ${citizenLinks.map(renderLink).join('')}
+        <div class="sidebar-section-label" style="margin-top:12px">Municipal</div>
+        ${municipalLinks.map(renderLink).join('')}
+      </nav>
+      <div class="sidebar-footer">
+        ${authChip}
+        <div class="mvp-badge" style="margin-top:10px">⬡ MVP PROTOTYPE</div>
+        <div>© 2026 Swachh Mitra</div>
+        <div style="margin-top:3px">Lucknow Municipal Corporation</div>
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       </div>
     </aside>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -173,6 +250,7 @@ function smLogout() {
   window.location.href = 'login.html';
 }
 
+<<<<<<< HEAD
 // ── Header Builder ─────────────────────────────────────────────
 function buildHeader({ title, subtitle, showSearch = false, searchPlaceholder = "Search...", customAction = null }) {
   let auth = null;
@@ -189,6 +267,13 @@ function buildHeader({ title, subtitle, showSearch = false, searchPlaceholder = 
     </a>
   `;
 
+=======
+
+
+
+// ── Header Builder ─────────────────────────────────────────────
+function buildHeader({ title, subtitle, showSearch = false, searchPlaceholder = "Search..." }) {
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   return `
     <header class="top-header">
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
@@ -198,25 +283,38 @@ function buildHeader({ title, subtitle, showSearch = false, searchPlaceholder = 
         <div class="page-title">${title}</div>
         <div class="page-subtitle">${subtitle}</div>
       </div>
+<<<<<<< HEAD
       <div class="header-actions" style="display:flex;align-items:center;gap:10px">
+=======
+      <div class="header-actions">
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
         ${showSearch ? `
           <div class="search-box" role="search">
             ${Icons.search}
             <input type="text" placeholder="${searchPlaceholder}" id="globalSearchInput" aria-label="Search">
           </div>
         ` : ''}
+<<<<<<< HEAD
         ${customAction || checkAreaBtn}
         <button class="icon-btn" aria-label="Notifications" id="notifBtn" onclick="showToast('You have 2 new community cleanliness updates', 'default')">
           ${Icons.bell}
           <span class="notif-dot"></span>
         </button>
         <div class="user-avatar" role="button" tabindex="0" title="${auth ? auth.name : 'Swachh Mitra User'}" aria-label="User menu">${avatarText}</div>
+=======
+        <button class="icon-btn" aria-label="Notifications" id="notifBtn">
+          ${Icons.bell}
+          <span class="notif-dot"></span>
+        </button>
+        <div class="user-avatar" role="button" tabindex="0" aria-label="User menu">MS</div>
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       </div>
     </header>
   `;
 }
 
 // ── Page Bootstrap ─────────────────────────────────────────────
+<<<<<<< HEAD
 function initPage({ activeNav, title, subtitle, showSearch = false, searchPlaceholder, customAction = null }) {
   // Auth guard for municipal pages
   const municipalPages = ['dashboard', 'bins', 'collection', 'settings'];
@@ -248,13 +346,20 @@ function initPage({ activeNav, title, subtitle, showSearch = false, searchPlaceh
     }
   }
 
+=======
+function initPage({ activeNav, title, subtitle, showSearch = false, searchPlaceholder }) {
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   const shell = document.getElementById('app-shell');
   if (!shell) return;
 
   shell.innerHTML = `
     ${buildSidebar(activeNav)}
     <div class="main-content">
+<<<<<<< HEAD
       ${buildHeader({ title, subtitle, showSearch, searchPlaceholder, customAction })}
+=======
+      ${buildHeader({ title, subtitle, showSearch, searchPlaceholder })}
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       <div class="page-body" id="page-body">
         <!-- page content injected here -->
       </div>
@@ -262,8 +367,11 @@ function initPage({ activeNav, title, subtitle, showSearch = false, searchPlaceh
     ${buildToastContainer()}
     ${buildBinModal()}
     ${buildAssignModal()}
+<<<<<<< HEAD
     ${buildComplaintModal()}
     ${buildGuideModal()}
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   `;
 
   initSidebarToggle();
@@ -496,6 +604,7 @@ async function createPickupTask(binId) {
 }
 
 
+<<<<<<< HEAD
 // ── Complaint Modal (Citizen) ──────────────────────────────────
 function buildComplaintModal() {
   const areaOptions = (typeof AppState !== 'undefined' && AppState.areas)
@@ -718,14 +827,24 @@ document.addEventListener('click', (e) => {
   if (e.target.id === 'assignModal')    closeAssignModal();
   if (e.target.id === 'complaintModal') closeComplaintModal();
   if (e.target.id === 'guideModal')     closeGuideModal();
+=======
+// ── Modal close on overlay click ──────────────────────────────
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'binModal')    closeBinModal();
+  if (e.target.id === 'assignModal') closeAssignModal();
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 });
 
 // ── Keyboard close ─────────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
+<<<<<<< HEAD
   if (e.key === 'Escape') {
     closeBinModal();
     closeAssignModal();
     closeComplaintModal();
     closeGuideModal();
   }
+=======
+  if (e.key === 'Escape') { closeBinModal(); closeAssignModal(); }
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 });

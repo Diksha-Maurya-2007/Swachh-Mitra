@@ -62,7 +62,11 @@
 initPage({
   activeNav: 'simulator',
   title: 'Smart Bin Sensor Simulator',
+<<<<<<< HEAD
   subtitle: 'Live IoT telemetry and bin fill-level management console.',
+=======
+  subtitle: 'Simulate IoT fill-level readings for prototype demonstration.',
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 });
 
 let selectedBinId  = 4; // default: Bin #104
@@ -76,6 +80,7 @@ function renderSimulatorPage() {
   const body = document.getElementById('page-body');
 
   body.innerHTML = `
+<<<<<<< HEAD
     <!-- Live Telemetry Notice -->
     <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:var(--radius-md);padding:12px 18px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px" role="note">
       <div style="flex-shrink:0;color:var(--color-primary-light);margin-top:1px">${Icons.wifi}</div>
@@ -83,11 +88,23 @@ function renderSimulatorPage() {
         <div style="font-size:0.845rem;font-weight:650;color:var(--color-primary)">Live IoT Sensor Simulation &amp; Calibration</div>
         <div style="font-size:0.78rem;color:var(--color-primary-light);margin-top:2px">
           Adjust bin fill levels dynamically to test real-time alerts, collection task dispatching, and predictive overflow models.
+=======
+    <!-- Prototype Notice -->
+    <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:var(--radius-md);padding:12px 18px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px" role="note">
+      <div style="flex-shrink:0;color:var(--color-primary-light);margin-top:1px">${Icons.wifi}</div>
+      <div>
+        <div style="font-size:0.845rem;font-weight:650;color:var(--color-primary)">Prototype IoT Simulation</div>
+        <div style="font-size:0.78rem;color:var(--color-primary-light);margin-top:2px">
+          In the production system, fill-level readings come from ultrasonic/IR sensors installed in community bins and transmitted via IoT gateways. This simulator demonstrates how sensor data would flow into the dashboard.
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
         </div>
       </div>
     </div>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
     <div class="sim-layout">
       <!-- Left: bin selector -->
       <div>

@@ -19,6 +19,7 @@ const AppState = (() => {
   // is not configured. Replace with real data via Supabase.
 
   const LOCAL_BINS = [
+<<<<<<< HEAD
     { id: 1,  binNumber: '101', area: 'Gomti Nagar',  location: 'Near Park Gate, Sector 2',     wasteType: 'Wet', fillLevel: 42, lat: 26.8530, lng: 80.9920, lastPickup: 'Today, 08:15 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 07:00 AM', '2 days ago, 08:30 AM', '3 days ago, 07:45 AM'] },
     { id: 2,  binNumber: '102', area: 'Aliganj',      location: 'Main Market, Block C',          wasteType: 'Dry', fillLevel: 68, lat: 26.8870, lng: 80.9420, lastPickup: 'Today, 09:00 AM', predictedFullTime: '4 hr 10 min', collectionHistory: ['Yesterday, 09:00 AM', '2 days ago, 08:00 AM'] },
     { id: 3,  binNumber: '103', area: 'Indira Nagar', location: 'Community Centre Road',         wasteType: 'Wet', fillLevel: 91, lat: 26.8820, lng: 80.9960, lastPickup: 'Yesterday, 06:30 PM', predictedFullTime: 'Overdue',  collectionHistory: ['2 days ago, 06:30 PM', '3 days ago, 07:00 PM'] },
@@ -47,17 +48,52 @@ const AppState = (() => {
       description: "Gomti Nagar is a premier residential and commercial hub, consistently ranking at the top for cleanliness and waste management practices.",
     },
     { id: 2, name: 'Aliganj',      ward: 'Ward 8',  lat: 26.8850, lng: 80.9400, cleanlinessScore: 91, segregationScore: 93, collectionScore: 90, overflowScore: 89, openDumpingScore: 6,  trend: 'up',   city: 'Metro City',
+=======
+    { id: 1,  binNumber: '101', area: 'Gomti Nagar',  location: 'Near Park Gate, Sector 2',     wasteType: 'Wet', fillLevel: 42, lastPickup: 'Today, 08:15 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 07:00 AM', '2 days ago, 08:30 AM', '3 days ago, 07:45 AM'] },
+    { id: 2,  binNumber: '102', area: 'Aliganj',      location: 'Main Market, Block C',          wasteType: 'Dry', fillLevel: 68, lastPickup: 'Today, 09:00 AM', predictedFullTime: '4 hr 10 min', collectionHistory: ['Yesterday, 09:00 AM', '2 days ago, 08:00 AM'] },
+    { id: 3,  binNumber: '103', area: 'Indira Nagar', location: 'Community Centre Road',         wasteType: 'Wet', fillLevel: 91, lastPickup: 'Yesterday, 06:30 PM', predictedFullTime: 'Overdue',  collectionHistory: ['2 days ago, 06:30 PM', '3 days ago, 07:00 PM'] },
+    { id: 4,  binNumber: '104', area: 'Hazratganj',   location: 'Hazratganj Chowk, Near GPO',   wasteType: 'Wet', fillLevel: 78, lastPickup: 'Today, 10:30 AM', predictedFullTime: '1 hr 20 min', collectionHistory: ['Yesterday, 10:30 AM', '2 days ago, 11:00 AM'] },
+    { id: 5,  binNumber: '105', area: 'Alambagh',     location: 'Bus Stand Approach Road',       wasteType: 'Dry', fillLevel: 55, lastPickup: 'Today, 07:45 AM', predictedFullTime: '6 hr 30 min', collectionHistory: ['Yesterday, 08:00 AM'] },
+    { id: 6,  binNumber: '106', area: 'Chowk',        location: 'Old City Market, Aminabad',     wasteType: 'Wet', fillLevel: 87, lastPickup: 'Yesterday, 04:00 PM', predictedFullTime: '30 min',  collectionHistory: ['2 days ago, 04:00 PM'] },
+    { id: 7,  binNumber: '107', area: 'Rajajipuram',  location: 'Sector 7, Near School',         wasteType: 'Dry', fillLevel: 32, lastPickup: 'Today, 11:00 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 11:00 AM'] },
+    { id: 8,  binNumber: '108', area: 'Gomti Nagar',  location: 'Viram Khand, Block B',          wasteType: 'Wet', fillLevel: 74, lastPickup: 'Today, 09:30 AM', predictedFullTime: '2 hr 45 min', collectionHistory: ['Yesterday, 09:30 AM'] },
+    { id: 9,  binNumber: '109', area: 'Aliganj',      location: 'Sector E, Near Temple',         wasteType: 'Dry', fillLevel: 20, lastPickup: 'Today, 12:00 PM', predictedFullTime: null,          collectionHistory: ['Yesterday, 12:00 PM'] },
+    { id: 10, binNumber: '110', area: 'Indira Nagar', location: 'Munshipulia, Ring Road',        wasteType: 'Wet', fillLevel: 83, lastPickup: 'Yesterday, 05:00 PM', predictedFullTime: '50 min',  collectionHistory: ['2 days ago, 05:00 PM'] },
+    { id: 11, binNumber: '111', area: 'Hazratganj',   location: 'MG Road, Opp. HDFC Bank',       wasteType: 'Dry', fillLevel: 61, lastPickup: 'Today, 08:00 AM', predictedFullTime: '5 hr 00 min', collectionHistory: ['Yesterday, 08:00 AM'] },
+    { id: 12, binNumber: '112', area: 'Alambagh',     location: 'Prem Nagar, Near Clinic',       wasteType: 'Wet', fillLevel: 47, lastPickup: 'Today, 10:00 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 10:00 AM'] },
+    { id: 13, binNumber: '113', area: 'Chowk',        location: 'Nakhas Market',                 wasteType: 'Dry', fillLevel: 93, lastPickup: 'Yesterday, 02:00 PM', predictedFullTime: 'Overdue',  collectionHistory: ['2 days ago, 02:00 PM'] },
+    { id: 14, binNumber: '114', area: 'Rajajipuram',  location: 'Rajajipuram Bus Stand',         wasteType: 'Wet', fillLevel: 38, lastPickup: 'Today, 09:15 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 09:15 AM'] },
+    { id: 15, binNumber: '115', area: 'Gomti Nagar',  location: 'Vikas Nagar Chowk',             wasteType: 'Dry', fillLevel: 72, lastPickup: 'Today, 07:00 AM', predictedFullTime: '3 hr 00 min', collectionHistory: ['Yesterday, 07:00 AM'] },
+    { id: 16, binNumber: '116', area: 'Aliganj',      location: 'Block K, Main Road',            wasteType: 'Wet', fillLevel: 88, lastPickup: 'Yesterday, 06:00 PM', predictedFullTime: '25 min',  collectionHistory: ['2 days ago, 06:00 PM'] },
+    { id: 17, binNumber: '117', area: 'Indira Nagar', location: 'Sector 14, Near Park',          wasteType: 'Dry', fillLevel: 55, lastPickup: 'Today, 11:30 AM', predictedFullTime: null,          collectionHistory: ['Yesterday, 11:30 AM'] },
+    { id: 18, binNumber: '118', area: 'Hazratganj',   location: 'Lalbagh Chowk',                 wasteType: 'Wet', fillLevel: 87, lastPickup: 'Yesterday, 03:30 PM', predictedFullTime: '35 min',  collectionHistory: ['2 days ago, 03:30 PM'] },
+  ];
+
+  const LOCAL_AREAS = [
+    { id: 1, name: 'Gomti Nagar',  ward: 'Ward 12', cleanlinessScore: 94, segregationScore: 96, collectionScore: 95, overflowScore: 92, openDumpingScore: 4,  trend: 'up',   city: 'Lucknow',
+      weeklyScores: [87,89,90,91,92,93,94], complaintsTotal: 48,  complaintsResolved: 46, complaintsRate: 96,
+      binsTotal: 4, binsNormal: 3, nearlyFull: 1, pickupRequired: 0,
+      highlights: ['Best segregation in city', 'Zero overflow incidents this week', '96% complaints resolved'],
+      description: "Gomti Nagar is Lucknow's premier residential and commercial hub, consistently ranking at the top for cleanliness and waste management practices.",
+    },
+    { id: 2, name: 'Aliganj',      ward: 'Ward 8',  cleanlinessScore: 91, segregationScore: 93, collectionScore: 90, overflowScore: 89, openDumpingScore: 6,  trend: 'up',   city: 'Lucknow',
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       weeklyScores: [84,85,87,88,89,90,91], complaintsTotal: 62,  complaintsResolved: 58, complaintsRate: 94,
       binsTotal: 3, binsNormal: 2, nearlyFull: 0, pickupRequired: 1,
       highlights: ['Strong community participation', 'Improved segregation by 8% this month'],
       description: 'Aliganj is a densely populated residential area with active citizen participation in waste segregation and reporting.',
     },
+<<<<<<< HEAD
     { id: 3, name: 'Indira Nagar', ward: 'Ward 15', lat: 26.8800, lng: 80.9950, cleanlinessScore: 89, segregationScore: 88, collectionScore: 91, overflowScore: 86, openDumpingScore: 8,  trend: 'down', city: 'Metro City',
+=======
+    { id: 3, name: 'Indira Nagar', ward: 'Ward 15', cleanlinessScore: 89, segregationScore: 88, collectionScore: 91, overflowScore: 86, openDumpingScore: 8,  trend: 'down', city: 'Lucknow',
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       weeklyScores: [91,90,91,90,89,89,89], complaintsTotal: 74,  complaintsResolved: 68, complaintsRate: 92,
       binsTotal: 3, binsNormal: 1, nearlyFull: 1, pickupRequired: 1,
       highlights: ['High collection efficiency (91%)', 'Slight decline due to festival waste'],
       description: 'Indira Nagar is a large mixed-use neighbourhood with good collection efficiency but facing overflow pressure at peak times.',
     },
+<<<<<<< HEAD
     { id: 4, name: 'Hazratganj',   ward: 'Ward 5',  lat: 26.8467, lng: 80.9460, cleanlinessScore: 86, segregationScore: 85, collectionScore: 87, overflowScore: 84, openDumpingScore: 10, trend: 'up',   city: 'Metro City',
       weeklyScores: [80,81,82,83,84,85,86], complaintsTotal: 55,  complaintsResolved: 49, complaintsRate: 89,
       binsTotal: 3, binsNormal: 0, nearlyFull: 1, pickupRequired: 2,
@@ -65,11 +101,21 @@ const AppState = (() => {
       description: "Hazratganj is a vibrant commercial district. Higher footfall creates unique waste challenges that the team is actively addressing.",
     },
     { id: 5, name: 'Alambagh',     ward: 'Ward 18', lat: 26.8150, lng: 80.9100, cleanlinessScore: 82, segregationScore: 80, collectionScore: 83, overflowScore: 81, openDumpingScore: 14, trend: 'same', city: 'Metro City',
+=======
+    { id: 4, name: 'Hazratganj',   ward: 'Ward 5',  cleanlinessScore: 86, segregationScore: 85, collectionScore: 87, overflowScore: 84, openDumpingScore: 10, trend: 'up',   city: 'Lucknow',
+      weeklyScores: [80,81,82,83,84,85,86], complaintsTotal: 55,  complaintsResolved: 49, complaintsRate: 89,
+      binsTotal: 3, binsNormal: 0, nearlyFull: 1, pickupRequired: 2,
+      highlights: ['Improving weekly trend (+6 pts)', 'Commercial area under active monitoring'],
+      description: "Hazratganj is Lucknow's historic commercial heart. Higher footfall creates unique waste challenges that the team is actively addressing.",
+    },
+    { id: 5, name: 'Alambagh',     ward: 'Ward 18', cleanlinessScore: 82, segregationScore: 80, collectionScore: 83, overflowScore: 81, openDumpingScore: 14, trend: 'same', city: 'Lucknow',
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       weeklyScores: [82,81,82,82,81,82,82], complaintsTotal: 80,  complaintsResolved: 70, complaintsRate: 88,
       binsTotal: 2, binsNormal: 2, nearlyFull: 0, pickupRequired: 0,
       highlights: ['Stable performance', 'Open dumping reduction needed near bus stand'],
       description: 'Alambagh is a transit-heavy area with stable but stagnant performance. Community programs are being planned to push scores higher.',
     },
+<<<<<<< HEAD
     { id: 6, name: 'Chowk',        ward: 'Ward 3',  lat: 26.8680, lng: 80.9080, cleanlinessScore: 74, segregationScore: 72, collectionScore: 76, overflowScore: 70, openDumpingScore: 22, trend: 'down', city: 'Metro City',
       weeklyScores: [78,77,76,75,74,74,74], complaintsTotal: 120, complaintsResolved: 98, complaintsRate: 82,
       binsTotal: 2, binsNormal: 0, nearlyFull: 0, pickupRequired: 2,
@@ -77,6 +123,15 @@ const AppState = (() => {
       description: "Chowk is a historic cultural district. Dense lanes and commercial activity make waste management challenging, but improvement programs are underway.",
     },
     { id: 7, name: 'Rajajipuram',  ward: 'Ward 21', lat: 26.8350, lng: 80.8850, cleanlinessScore: 69, segregationScore: 68, collectionScore: 71, overflowScore: 66, openDumpingScore: 28, trend: 'up',   city: 'Metro City',
+=======
+    { id: 6, name: 'Chowk',        ward: 'Ward 3',  cleanlinessScore: 74, segregationScore: 72, collectionScore: 76, overflowScore: 70, openDumpingScore: 22, trend: 'down', city: 'Lucknow',
+      weeklyScores: [78,77,76,75,74,74,74], complaintsTotal: 120, complaintsResolved: 98, complaintsRate: 82,
+      binsTotal: 2, binsNormal: 0, nearlyFull: 0, pickupRequired: 2,
+      highlights: ['Old city area — complex logistics', 'Complaint resolution improving'],
+      description: "Chowk is Lucknow's historic old city. Dense lanes and commercial activity make waste management challenging, but improvement programs are underway.",
+    },
+    { id: 7, name: 'Rajajipuram',  ward: 'Ward 21', cleanlinessScore: 69, segregationScore: 68, collectionScore: 71, overflowScore: 66, openDumpingScore: 28, trend: 'up',   city: 'Lucknow',
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       weeklyScores: [62,63,64,66,67,68,69], complaintsTotal: 95,  complaintsResolved: 76, complaintsRate: 80,
       binsTotal: 2, binsNormal: 2, nearlyFull: 0, pickupRequired: 0,
       highlights: ['Strong upward trend (+7 pts)', 'New collection routes added this week'],
@@ -84,7 +139,10 @@ const AppState = (() => {
     },
   ];
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   const LOCAL_TASKS = [
     { id: 1,  binId: 3,  priority: 'High',   assignedTeam: 'Team A', status: 'Pending',     createdAt: '2026-09-11T11:00:00', reason: 'Critical fill level' },
     { id: 2,  binId: 6,  priority: 'High',   assignedTeam: 'Team B', status: 'In Progress', createdAt: '2026-09-11T11:15:00', reason: 'Predicted overflow in 30 min' },
@@ -169,9 +227,14 @@ const AppState = (() => {
       id:                row.id,
       name:              row.name,
       ward:              row.ward,
+<<<<<<< HEAD
       city:              row.city || '',
       cleanlinessScore:  row.cleanliness_score,
 
+=======
+      city:              row.city || 'Lucknow',
+      cleanlinessScore:  row.cleanliness_score,
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
       segregationScore:  row.segregation_score,
       collectionScore:   row.collection_score,
       overflowScore:     row.overflow_score,
@@ -445,6 +508,7 @@ const AppState = (() => {
       );
   }
 
+<<<<<<< HEAD
   function getNearestArea(lat, lng) {
     if (!lat || !lng) return areas[0];
     let closest = null;
@@ -461,6 +525,8 @@ const AppState = (() => {
     return closest || areas[0];
   }
 
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   return {
     // Data arrays (live references — update in-place via Supabase)
     bins, areas, collectionTasks, teams,
@@ -476,10 +542,17 @@ const AppState = (() => {
     updateBinFillLevel, markCollected, assignTeam, createTask,
 
     // Citizen-facing
+<<<<<<< HEAD
     getAreaByName, getAreaRank, getNearbyAreas, searchAreas, getNearestArea,
+=======
+    getAreaByName, getAreaRank, getNearbyAreas, searchAreas,
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 
     // Event bus
     on, off, _notify,
   };
 })();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
