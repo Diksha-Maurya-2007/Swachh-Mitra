@@ -32,16 +32,10 @@
   /* Sidebar */
   --sidebar-width:       240px;
   --sidebar-bg:          #0f2540;
-<<<<<<< HEAD
   --sidebar-text:        #e2e8f0;
   --sidebar-active:      #2563a8;
   --sidebar-hover:       rgba(255,255,255,0.12);
 
-=======
-  --sidebar-text:        #c8d8e9;
-  --sidebar-active:      #2563a8;
-  --sidebar-hover:       rgba(255,255,255,0.07);
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 
   /* Layout */
   --header-height:       64px;
@@ -159,19 +153,11 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 
 .sidebar-section-label {
-<<<<<<< HEAD
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: #94a3b8;
-=======
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--sidebar-text);
-  opacity: 0.4;
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   padding: 16px 18px 6px;
 }
 
@@ -179,19 +165,11 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   display: flex;
   align-items: center;
   gap: 10px;
-<<<<<<< HEAD
   padding: 10px 18px;
   border-radius: 0;
   color: #cbd5e1;
   font-size: 0.875rem;
   font-weight: 500;
-=======
-  padding: 9px 18px;
-  border-radius: 0;
-  color: var(--sidebar-text);
-  font-size: 0.875rem;
-  font-weight: 450;
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
   transition: background var(--transition), color var(--transition);
   position: relative;
   cursor: pointer;
@@ -223,22 +201,16 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 
 .sidebar-link .nav-icon {
   width: 18px; height: 18px;
-<<<<<<< HEAD
   opacity: 1;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-=======
-  opacity: 0.75;
-  flex-shrink: 0;
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 }
 
 .sidebar-link.active .nav-icon,
 .sidebar-link:hover .nav-icon { opacity: 1; }
 
 .sidebar-footer {
-<<<<<<< HEAD
   padding: 16px 18px;
   border-top: 1px solid rgba(255,255,255,0.12);
   font-size: 0.75rem;
@@ -247,28 +219,6 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 
 
-=======
-  padding: 14px 18px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  font-size: 0.7rem;
-  color: var(--sidebar-text);
-  opacity: 0.45;
-}
-
-.sidebar-footer .mvp-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(255,255,255,0.07);
-  color: var(--color-accent);
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
-}
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
 
 /* ── Main Content Area ──────────────────────────────────────── */
 .main-content {

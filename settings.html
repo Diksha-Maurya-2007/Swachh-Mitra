@@ -111,18 +111,11 @@ document.getElementById('page-body').innerHTML = `
         </div>
         <div class="card-body-lg">
           <div class="form-group">
-<<<<<<< HEAD
             <label class="form-label" for="cityName">Municipality / Organization</label>
             <input class="form-input" id="cityName" type="text" value="Municipal Corporation" aria-describedby="cityNameHint">
             <div class="form-hint" id="cityNameHint">Displayed on dashboard header and reports.</div>
           </div>
 
-=======
-            <label class="form-label" for="cityName">Municipality / City</label>
-            <input class="form-input" id="cityName" type="text" value="Lucknow Municipal Corporation" aria-describedby="cityNameHint">
-            <div class="form-hint" id="cityNameHint">Displayed on dashboard header and reports.</div>
-          </div>
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
           <div class="form-group">
             <label class="form-label" for="timezone">Timezone</label>
             <select class="form-input" id="timezone" aria-label="Select timezone">
@@ -174,11 +167,7 @@ document.getElementById('page-body').innerHTML = `
       <div class="card hidden" id="section-thresholds">
         <div class="card-header">
           <div class="card-title">Alert Thresholds</div>
-<<<<<<< HEAD
           <span class="badge badge-normal">System Standard</span>
-=======
-          <span class="badge badge-muted">Prototype Defaults</span>
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
         </div>
         <div class="card-body-lg">
           <p style="font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:20px;line-height:1.6">
@@ -220,21 +209,12 @@ document.getElementById('page-body').innerHTML = `
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
             ${[
-<<<<<<< HEAD
               ['Version', 'v1.0.0'],
               ['Build', 'September 2026'],
               ['Platform', 'Smart Urban Waste Suite'],
               ['Database', 'Supabase Cloud PostgreSQL'],
               ['Sensor Telemetry', 'IoT Gateway Protocol'],
               ['Prediction Engine', 'Dynamic Fill Rate Analytics'],
-=======
-              ['Version', 'v1.0.0-MVP'],
-              ['Build', 'September 2026'],
-              ['Stage', 'Frontend Prototype'],
-              ['Backend', 'Not Connected Yet'],
-              ['IoT Integration', 'Simulated Only'],
-              ['ML/Prediction', 'Rule-based (Demo)'],
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
             ].map(([k,v]) => `
               <div class="detail-item">
                 <span class="detail-label">${k}</span>
@@ -243,18 +223,11 @@ document.getElementById('page-body').innerHTML = `
             `).join('')}
           </div>
           <div style="background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px;font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7">
-<<<<<<< HEAD
             <strong>About the Platform:</strong> Swachh Mitra connects citizens, smart community bins, sensor telemetry, and municipal collection teams to prevent open dumping and ensure timely waste disposal across urban wards.
           </div>
         </div>
       </div>
 
-=======
-            <strong>MVP Disclaimer:</strong> Swachh Mitra is an early-stage prototype built for demonstration and competition purposes. It is not yet connected to live sensors, a production database, or real municipal systems. All data shown is simulated dummy data. Features such as IoT integration, ML-based prediction, and citizen-facing apps are planned for future development phases.
-          </div>
-        </div>
-      </div>
->>>>>>> 8035904576ca87829a8802f1424ca373cf153b94
     </div>
   </div>
 `;
